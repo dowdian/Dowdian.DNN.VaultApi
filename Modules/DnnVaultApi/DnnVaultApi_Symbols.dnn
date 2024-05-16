@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dotnetnuke type="Package" version="6.0">
+  <packages>
+    <package name="Dowdian.Modules.DnnVaultApi_Symbols" type="Library" version="01.00.00">
+      <friendlyName>DnnVaultApi Module Symbols</friendlyName>
+      <description><![CDATA[Catch Phrase!]]></description>
+      <owner>
+        <name>Michael Dowd</name>
+        <organization>Dowdian</organization>
+        <url>https://dowdian.com</url>
+        <email>michael.dowd@dowdian.com</email>
+      </owner>
+      <license src="License.txt" />
+      <releaseNotes src="ReleaseNotes.txt" />
+      <azureCompatible>True</azureCompatible>
+      <dependencies>
+        <dependency type="managedPackage" version="1.0.0">Dowdian.Modules.DnnVaultApi</dependency>
+      </dependencies>
+      <components>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath></basePath>
+            <resourceFile>
+              <name>Resources.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>
