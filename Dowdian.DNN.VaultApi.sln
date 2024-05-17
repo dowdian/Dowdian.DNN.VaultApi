@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Files", "Build Files", "{F84D698C-3163-472D-95E9-EC36712D597B}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,7 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skins", "Skins", "{EAE79EDB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Viewsets", "Viewsets", "{C5228275-B3D3-4550-A755-98F70CDCEA69}"
 EndProject
-Project("{fae04ec0-301f-11d3-bf4b-00c04f79efbc}") = "Dowdian.Modules.DnnVaultApi", "Modules\DnnVaultApi\Dowdian.Modules.DnnVaultApi.csproj", "{4C757D14-1911-4D7F-99C8-A52C2AAF0354}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dowdian.Modules.DnnVaultApi", "Modules\DnnVaultApi\Dowdian.Modules.DnnVaultApi.csproj", "{4C757D14-1911-4D7F-99C8-A52C2AAF0354}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,10 +50,10 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {79858f17-834e-420f-9010-25d159ba6fb6}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4C757D14-1911-4D7F-99C8-A52C2AAF0354} = {70FB7EDF-2E12-405F-B9CD-8A437E96FB11}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79858f17-834e-420f-9010-25d159ba6fb6}
 	EndGlobalSection
 EndGlobal

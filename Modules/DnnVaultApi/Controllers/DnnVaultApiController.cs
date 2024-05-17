@@ -2,15 +2,11 @@
 // Copyright (c) Dowdian SRL. All rights reserved.
 // </copyright>
 
-using System;
-using System.Configuration;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
 using DotNetNuke.Web.Api;
-using Dowdian.Modules.DnnVaultApi.Providers;
+using Dowdian.Modules.DnnVaultApi.Repositories;
 using Newtonsoft.Json;
 
 namespace Dowdian.Modules.DnnVaultApi.Controllers
@@ -41,16 +37,10 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         /// <returns>HttpResponseMessage</returns>
         [DnnAuthorize]
         [HttpGet]
-        public HttpResponseMessage GetSecret()
+        public HttpResponseMessage GetSecret(string secretName)
         {
-            // authenticate to Azure Key Vault using the certificate with thumbprint "76AB32E6B23CEE6881C7B4AABF068E44D76750A6"
-            var cert = AzureKeyVaultCertificationHelper.FindCertificateByThumbprint("76AB32E6B23CEE6881C7B4AABF068E44D76750A6");
-            var client = new SecretClient(new Uri("https://dowdiankeyvault.vault.azure.net/"), new ClientCertificateCredential(ConfigurationManager.AppSettings["TenantId"], ConfigurationManager.AppSettings["ClientApplicationId"], cert));
-
-            // get the secret value for "DowdianTestValue"
-            KeyVaultSecret secret = client.GetSecret("DowdianTestValue");
-            string secretValue = secret.Value;
-
+            var SecretsRepository = new SecretsRepository();
+            var secret = SecretsRepository.GetSecret(secretName);
             var answer = JsonConvert.SerializeObject(secret);
 
             var response2 = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -58,6 +48,21 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
             return response2;
         }
 
+        /// <summary>
+        /// Create a Secret
+        /// </summary>
+        /// <returns>HttpResponseMessage</returns>
+        [DnnAuthorize]
+        [HttpGet]
+        public HttpResponseMessage CreateSecret(string secretName, string secretValue)
+        {
+            var SecretsRepository = new SecretsRepository();
+            SecretsRepository.CreateSecret(secretName, secretValue);
+            var answer = JsonConvert.SerializeObject("Fuck yeah!!! That worked!");
 
+            var response2 = this.Request.CreateResponse(HttpStatusCode.OK);
+            response2.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response2;
+        }
     }
 }

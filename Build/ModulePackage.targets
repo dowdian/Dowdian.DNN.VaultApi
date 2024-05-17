@@ -137,6 +137,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\*.dll" Exclude="$(MSBuildProjectDirectory)\bin\DotNetNuke*;$(MSBuildProjectDirectory)\bin\Dnn*;$(MSBuildProjectDirectory)\bin\Telerik*;$(MSBuildProjectDirectory)\bin\System.*;$(MSBuildProjectDirectory)\bin\Microsoft.*;$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.*" />
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Threading.Tasks.Extensions.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Json.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Diagnostics.DiagnosticSource.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Runtime.CompilerServices.Unsafe.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Numerics.Vectors.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\Microsoft.Identity.Client.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Encodings.Web.dll"></BinInstallInclude>
     </ItemGroup>
 
     <ItemGroup>

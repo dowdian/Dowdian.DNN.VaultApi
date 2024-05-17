@@ -41,6 +41,11 @@
       <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\*.dll" Exclude="$(MSBuildProjectDirectory)\bin\DotNetNuke*;$(MSBuildProjectDirectory)\bin\Telerik*;$(MSBuildProjectDirectory)\bin\System.*;$(MSBuildProjectDirectory)\bin\Microsoft.*;$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.*" />
       <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Threading.Tasks.Extensions.dll"></BinSourceInclude>
       <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Json.dll"></BinSourceInclude>
+      <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Diagnostics.DiagnosticSource.dll"></BinSourceInclude>
+      <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Runtime.CompilerServices.Unsafe.dll"></BinSourceInclude>
+      <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Numerics.Vectors.dll"></BinSourceInclude>
+      <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\Microsoft.Identity.Client.dll"></BinSourceInclude>
+      <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Encodings.Web.dll"></BinSourceInclude>
       <BinSourceInclude Include="$(MSBuildProjectDirectory)\bin\*.pdb" Exclude="$(MSBuildProjectDirectory)\bin\DotNetNuke*;$(MSBuildProjectDirectory)\bin\Telerik*;$(MSBuildProjectDirectory)\bin\System.*;$(MSBuildProjectDirectory)\bin\Microsoft.*;$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.*" />
     </ItemGroup>
     <Copy SourceFiles="@(BinSourceInclude)" DestinationFolder="$(WebsitePath)\bin" />

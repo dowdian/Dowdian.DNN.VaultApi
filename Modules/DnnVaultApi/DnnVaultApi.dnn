@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <dotnetnuke type="Package" version="6.0">
   <packages>
     <package name="Dowdian.Modules.DnnVaultApi" type="Module" version="01.00.00">
       <friendlyName>DnnVaultApi Module</friendlyName>
-      <description>
-        <![CDATA[<p>Catch Phrase!</p>]]>
-      </description>
+      <description><![CDATA[<p>Catch Phrase!</p>]]></description>
       <iconFile>DesktopModules/MVC/Dowdian.Modules.DnnVaultApi/Images/logo.png</iconFile>
       <owner>
         <name>Michael Dowd</name>
@@ -35,7 +33,6 @@
             </script>
           </scripts>
         </component>
-
         <component type="Module">
           <desktopModule>
             <moduleName>DnnVaultApi Module</moduleName>
@@ -92,7 +89,6 @@
             </attributes>
           </eventMessage>
         </component>
-
         <component type="Assembly">
           <assemblies>
             <assembly>
@@ -102,7 +98,6 @@
             </assembly>
           </assemblies>
         </component>
-
         <component type="ResourceFile">
           <resourceFiles>
             <basePath>DesktopModules/MVC/Dowdian.Modules.DnnVaultApi</basePath>
@@ -111,7 +106,6 @@
             </resourceFile>
           </resourceFiles>
         </component>
-
       </components>
     </package>
   </packages>
