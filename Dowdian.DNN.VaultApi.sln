@@ -26,11 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{70FB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dowdian.Modules.DnnVaultApi", "Modules\DnnVaultApi\Dowdian.Modules.DnnVaultApi.csproj", "{4C757D14-1911-4D7F-99C8-A52C2AAF0354}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Website", "Website", "{26DC9F71-B4C7-4B38-9990-EFDC35134E2E}"
-	ProjectSection(SolutionItems) = preProject
-		placeholder.txt = placeholder.txt
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
