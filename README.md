@@ -138,7 +138,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     const options = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application
+            'Content-Type': 'application'
         }
     };
     new Promise((resolve, reject) => {
