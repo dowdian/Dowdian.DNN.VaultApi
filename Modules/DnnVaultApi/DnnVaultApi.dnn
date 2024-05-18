@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dotnetnuke type="Package" version="6.0">
   <packages>
-    <package name="Dowdian.Modules.DnnVaultApi" type="Module" version="01.00.00">
+    <package name="Dowdian.Modules.DnnVaultApi" type="Module" version="01.00.05">
       <friendlyName>DnnVaultApi Module</friendlyName>
       <description><![CDATA[<p>Catch Phrase!</p>]]></description>
       <iconFile>DesktopModules/MVC/Dowdian.Modules.DnnVaultApi/Images/logo.png</iconFile>
@@ -15,7 +15,7 @@
       <releaseNotes src="ReleaseNotes.txt" />
       <azureCompatible>true</azureCompatible>
       <dependencies>
-        <dependency type="coreversion">09.08.00</dependency>
+        <dependency type="coreversion">09.13.00</dependency>
       </dependencies>
       <components>
         <component type="Script">
@@ -29,7 +29,7 @@
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>01.00.00</version>
+              <version>01.00.05</version>
             </script>
           </scripts>
         </component>
@@ -43,39 +43,6 @@
               <moduleDefinition>
                 <friendlyName>DnnVaultApi Module</friendlyName>
                 <defaultCacheTime>0</defaultCacheTime>
-                <moduleControls>
-                  <moduleControl>
-                    <controlKey />
-                    <controlSrc>Dowdian.Modules.DnnVaultApi.Controllers/Example/Index.mvc</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle />
-                    <controlType>View</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>Edit</controlKey>
-                    <controlSrc>Dowdian.Modules.DnnVaultApi.Controllers/Example/Edit.mvc</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>Edit DnnVaultApi Content</controlTitle>
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                    <supportsPopUps>True</supportsPopUps>
-                  </moduleControl>
-                  <moduleControl>
-                    <controlKey>Settings</controlKey>
-                    <controlSrc>Dowdian.Modules.DnnVaultApi.Controllers/Settings/Settings.mvc</controlSrc>
-                    <supportsPartialRendering>False</supportsPartialRendering>
-                    <controlTitle>DnnVaultApi Settings</controlTitle>
-                    <controlType>Edit</controlType>
-                    <iconFile />
-                    <helpUrl />
-                    <viewOrder>0</viewOrder>
-                  </moduleControl>
-                </moduleControls>
               </moduleDefinition>
             </moduleDefinitions>
           </desktopModule>
@@ -85,16 +52,60 @@
             <attributes>
               <businessControllerClass>Dowdian.Modules.DnnVaultApi.Components.DnnVaultApiController, Dowdian.Modules.DnnVaultApi</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>01.00.00</upgradeVersionsList>
+              <upgradeVersionsList>01.00.05</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
         <component type="Assembly">
           <assemblies>
             <assembly>
+              <name>Azure.Core.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>Azure.Extensions.AspNetCore.Configuration.Secrets.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>Azure.Identity.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>Azure.Security.KeyVault.Secrets.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
               <name>Dowdian.Modules.DnnVaultApi.dll</name>
               <path>bin</path>
-              <version>01.00.00</version>
+              <version>01.00.05</version>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Identity.Client.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Diagnostics.DiagnosticSource.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Numerics.Vectors.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Runtime.CompilerServices.Unsafe.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Text.Encodings.Web.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Text.Json.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Threading.Tasks.Extensions.dll</name>
+              <path>bin</path>
             </assembly>
           </assemblies>
         </component>

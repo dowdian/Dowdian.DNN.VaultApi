@@ -82,6 +82,16 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         }
 
         /// <summary>
+        /// RestoreSecret
+        /// </summary>
+        /// <param name="secretName"></param>
+        public static void RestoreSecret(string secretName)
+        {
+            var client = GetClient();
+            client.StartRecoverDeletedSecret(secretName);
+        }
+
+        /// <summary>
         /// PurgeSecret
         /// </summary>
         /// <param name="secretName"></param>

@@ -32,6 +32,23 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         #endregion Contructors
 
         /// <summary>
+        /// Create a Secret
+        /// </summary>
+        /// <returns>HttpResponseMessage</returns>
+        [DnnAuthorize]
+        [HttpGet]
+        public HttpResponseMessage CreateSecret(string secretName, string secretValue)
+        {
+            var SecretsRepository = new SecretsRepository();
+            SecretsRepository.CreateSecret(secretName, secretValue);
+            var answer = JsonConvert.SerializeObject($"A new secret with the name {secretName} has been successfully created in the Vault.");
+
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        /// <summary>
         /// Get a Secret
         /// </summary>
         /// <returns>HttpResponseMessage</returns>
@@ -43,26 +60,82 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
             var secret = SecretsRepository.GetSecret(secretName);
             var answer = JsonConvert.SerializeObject(secret);
 
-            var response2 = this.Request.CreateResponse(HttpStatusCode.OK);
-            response2.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
-            return response2;
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
         }
 
         /// <summary>
-        /// Create a Secret
+        /// Update a Secret
         /// </summary>
-        /// <returns>HttpResponseMessage</returns>
+        /// <param name="secretName"></param>
+        /// <param name="secretValue"></param>
+        /// <returns></returns>
         [DnnAuthorize]
         [HttpGet]
-        public HttpResponseMessage CreateSecret(string secretName, string secretValue)
+        public HttpResponseMessage UpdateSecret(string secretName, string secretValue)
         {
             var SecretsRepository = new SecretsRepository();
-            SecretsRepository.CreateSecret(secretName, secretValue);
-            var answer = JsonConvert.SerializeObject("Fuck yeah!!! That worked!");
+            SecretsRepository.UpdateSecret(secretName, secretValue);
+            var answer = JsonConvert.SerializeObject($"The secret with the name {secretName} has been successfully updated with a new value.");
 
-            var response2 = this.Request.CreateResponse(HttpStatusCode.OK);
-            response2.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
-            return response2;
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        /// <summary>
+        /// Delete a Secret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <returns></returns>
+        [DnnAuthorize]
+        [HttpGet]
+        public HttpResponseMessage DeleteSecret(string secretName)
+        {
+            var SecretsRepository = new SecretsRepository();
+            SecretsRepository.DeleteSecret(secretName);
+            var answer = JsonConvert.SerializeObject($"The secret with the name {secretName} has been successfully soft-delete from the Vault.");
+
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        /// <summary>
+        /// Restore a Secret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <returns></returns>
+        [DnnAuthorize]
+        [HttpGet]
+        public HttpResponseMessage RestoreSecret(string secretName)
+        {
+            var SecretsRepository = new SecretsRepository();
+            SecretsRepository.RestoreSecret(secretName);
+            var answer = JsonConvert.SerializeObject($"The soft-deleted secret with the name {secretName} has been successfully restored into the Vault.");
+
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
+        }
+
+        /// <summary>
+        /// Purge a Secret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <returns></returns>
+        [DnnAuthorize]
+        [HttpGet]
+        public HttpResponseMessage PurgeSecret(string secretName)
+        {
+            var SecretsRepository = new SecretsRepository();
+            SecretsRepository.PurgeSecret(secretName);
+            var answer = JsonConvert.SerializeObject($"The secret with the name {secretName} has been successfully purged from the Vault.");
+
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
+            return response;
         }
     }
 }

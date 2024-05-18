@@ -142,7 +142,9 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Numerics.Vectors.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\Microsoft.Identity.Client.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Encodings.Web.dll"></BinInstallInclude>
-    </ItemGroup>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Web.Http.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Memory.dll"></BinInstallInclude>
+	</ItemGroup>
 
     <ItemGroup>
       <SymbolsBinInclude Include="$(MSBuildProjectDirectory)\bin\*.pdb" Exclude="$(MSBuildProjectDirectory)\bin\DotNetNuke*;$(MSBuildProjectDirectory)\bin\Dnn*;$(MSBuildProjectDirectory)\bin\Telerik*;$(MSBuildProjectDirectory)\bin\System.*;$(MSBuildProjectDirectory)\bin\Microsoft.*;$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.*" />

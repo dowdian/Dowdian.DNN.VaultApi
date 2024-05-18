@@ -35,6 +35,13 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
         string DeleteSecret(string secretName);
 
         /// <summary>
+        /// Restore the secret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <returns></returns>
+        string RestoreSecret(string secretName);
+
+        /// <summary>
         /// Purge the secret
         /// </summary>
         /// <param name="secretName"></param>
@@ -69,6 +76,12 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
         public void DeleteSecret(string secretName)
         {
             AzureKeyVaultProvider.DeleteSecret(secretName);
+        }
+
+        /// <inheritdoc/>
+        public void RestoreSecret(string secretName)
+        {
+            AzureKeyVaultProvider.RestoreSecret(secretName);
         }
 
         /// <inheritdoc/>
