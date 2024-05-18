@@ -18,21 +18,6 @@
         <dependency type="coreversion">09.13.00</dependency>
       </dependencies>
       <components>
-        <component type="Script">
-          <scripts>
-            <basePath>DesktopModules\MVC\Dowdian.Modules.DnnVaultApi</basePath>
-            <script type="Install">
-              <path>Providers\DataProviders\SqlDataProvider</path>
-              <name>01.00.00.SqlDataProvider</name>
-              <version>01.00.00</version>
-            </script>
-            <script type="UnInstall">
-              <path>Providers\DataProviders\SqlDataProvider</path>
-              <name>Uninstall.SqlDataProvider</name>
-              <version>01.00.05</version>
-            </script>
-          </scripts>
-        </component>
         <component type="Module">
           <desktopModule>
             <moduleName>DnnVaultApi Module</moduleName>
@@ -52,7 +37,7 @@
             <attributes>
               <businessControllerClass>Dowdian.Modules.DnnVaultApi.Components.DnnVaultApiController, Dowdian.Modules.DnnVaultApi</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>01.00.05</upgradeVersionsList>
+              <upgradeVersionsList>01.00.00</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
