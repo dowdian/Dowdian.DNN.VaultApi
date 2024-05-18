@@ -1,4 +1,5 @@
 # DNN Azure Key Vault Web API
+## Introduction
 __Please Note__: 
 These instructions are accurate as of May 18, 2024. If you're reading this in the future (which I presume you are), you may need to adjust the instructions to match the current state of the Azure portal. This is what made creating this project so damn hard. _All_ the instructions, tutorials and sample projects I could find were convoluted and/or out of date. This goal of this project is to create a simple project that people (i.e: me) can learn from.
 
@@ -129,7 +130,7 @@ Next up, you'll need to create a self-signed certificate to authenticate to the 
 
 Now you should be all set to use the API to Create, Read, Update, and Delete secrets in your Azure Key Vault. 🎉
 
-### Using the API
+## Using the API
 1. Using your favorite browser, log into your DNN instance.
 1. Open Dev Tools and navigate to the Console tab.
 1. Run the following JavaScript code to test the API:
