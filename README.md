@@ -22,6 +22,7 @@ To begin, let's get DNN and the project set up.
 1. Clone this repository to a directory close to the root of your local machine (to avoid any potential issues with long paths).
 1. Create a new folder in the root of the solution called `Website`.
 1. Give the `NETWORK SERVICE` account full permissions on the `Website` directory to allow IIS to read and write to the directory.
+
     ![Folder permissions](./ReadMeImages/dnn-step-01.png)
 1. Unzip a [fresh copy of DNN](https://github.com/dnnsoftware/Dnn.Platform/releases) into the new `Website` directory.
 1. Create a database in your local SQL Server instance using the following script:
@@ -63,6 +64,7 @@ To begin, let's get DNN and the project set up.
 	- Application Pool: `DefaultAppPool`
 	    > Note: If you already have applications running under your DefaultAppPool, you may want to create a new AppPool for this application.
 1. Modify the DefaultAppPool (or the AppPool of your choice) to use the `NETWORK SERVICE` account as its identity.
+
     ![Database permissions](./ReadMeImages/dnn-step-07.png)
 1. Using your favorite browser, navigate to `http://localhost/DnnVaultApi` to complete the DNN installation process      .
 	- Give the host user a password.
@@ -74,6 +76,7 @@ To begin, let's get DNN and the project set up.
     - All other values can be left as their default values.
 1. Open the solution in Visual Studio and build it in **Release mode**. This will create the installer files in the `.\Website\Install\Modules` directory.
 ### 🚀 Witness the destructive power of this fully *inoperational* DNN instance 🚀
+
 ![Database permissions](./ReadMeImages/dnn-step-10.png)
 
 11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the web.config file with the following settings so that the site will work again:
@@ -176,6 +179,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
 	  <add key="KeyVaultUri" value="[Your Vault URI]" />
 	```
 	> Replace `[Directory (tenant) ID]`, `[Your Application (client) ID]`, `[Your Certificate Thumbprint]`, and `[Your Vault URI]` with the values you collected earlier.
+    This step will change in the near future as I intend to encrypt one or more sections of the web.config to hide these values properly.
 1. Using your favorite browser, log into your DNN instance.
 1. Open Dev Tools and navigate to the Console tab.
 1. Run the following JavaScript code to test the API by creating a new secret named "DnnVaultApiTestValue" with a value of "SuperSecretValueHandleWithCare":
@@ -247,7 +251,7 @@ SuperSecretValueHandleWithCare
 ```
 
 ### Next Steps:
-Encrypt one or more sections of the web.config file using a seperate certificate so that the `[Directory (tenant) ID]`, `[Your Application (client) ID]`, `[Your Certificate Thumbprint]`, and `[Your Vault URI]` values are well hidden.
+1. Encrypt one or more sections of the web.config file using a seperate certificate so that the `[Directory (tenant) ID]`, `[Your Application (client) ID]`, `[Your Certificate Thumbprint]`, and `[Your Vault URI]` values are well hidden.
 
 ### Conclusion
 I have been told that the best way to ask for help online is to make a statement with absolute certainty and wait for the good folks of the world to tell you how wrong you are. With this in mind, I can say with the utmost conviction that the above instructions will work perfectly for you. If they don't, please let me know so that I can correct them. 🙏
@@ -260,3 +264,6 @@ I would like to thank the creators of the following resources for their help in 
 1. https://stackoverflow.com/questions/52044838/how-to-use-certificate-from-azure-keyvault-with-httpclient-without-extracting-it
 1. https://www.c-sharpcorner.com/article/accessing-azure-key-vaults-using-certification/
 1. https://stackoverflow.com/questions/67646500/azure-api-authenticating-apis-with-a-client-certificate-oauth-2-0
+1. Upendo Ventures for the [Upendo DNN Generator]
+1. The DNN Community for the [DNN Platform]
+1. My wife for putting up with me while I worked on this project.
