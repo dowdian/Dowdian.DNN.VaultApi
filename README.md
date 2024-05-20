@@ -79,50 +79,44 @@ To begin, let's get DNN and the project set up.
 
 ![Database permissions](./ReadMeImages/dnn-step-10.png)
 
-11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the web.config file with the following settings so that the site will work again:
+11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the configuration/runtime/assemblyBinding section of the web.config file bu adding the following entries ***at the top of the section*** so that the site will work again:
     ```
-    <configuration>
-      <runtime>
-        <assemblyBinding ...>
-          <dependentAssembly>
-            <assemblyIdentity name="Azure.Core" publicKeyToken="92742159e12e44c8" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="1.39.0.0" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Web.Http" publicKeyToken="31bf3856ad364e35" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="5.3.0.0" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" />
-            <bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" />
-            <bindingRedirect oldVersion="0.0.0.0-8.0.0.1" newVersion="8.0.0.1" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" />
-            <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="Microsoft.Bcl.AsyncInterfaces" publicKeyToken="cc7b13ffcd2ddd51" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="8.0.0.0" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="Microsoft.Identity.Client" publicKeyToken="0a613f4dd989e8ae" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.61.0.0" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Threading.Tasks.Extensions" publicKeyToken="cc7b13ffcd2ddd51" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.2.0.1" />
-          </dependentAssembly>
-          <dependentAssembly>
-            <assemblyIdentity name="System.Text.Encodings.Web" publicKeyToken="cc7b13ffcd2ddd51" />
-            <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.0.5.1" />
-          </dependentAssembly>
-        </assemblyBinding>
-      </runtime>
-    </configuration>
+    <dependentAssembly>
+        <assemblyIdentity name="Azure.Core" publicKeyToken="92742159e12e44c8" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="1.39.0.0" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Web.Http" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="5.3.0.0" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" />
+        <bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" />
+        <bindingRedirect oldVersion="0.0.0.0-8.0.0.1" newVersion="8.0.0.1" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Bcl.AsyncInterfaces" publicKeyToken="cc7b13ffcd2ddd51" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="8.0.0.0" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="Microsoft.Identity.Client" publicKeyToken="0a613f4dd989e8ae" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.61.0.0" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Threading.Tasks.Extensions" publicKeyToken="cc7b13ffcd2ddd51" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.2.0.1" />
+    </dependentAssembly>
+    <dependentAssembly>
+        <assemblyIdentity name="System.Text.Encodings.Web" publicKeyToken="cc7b13ffcd2ddd51" />
+        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.0.5.1" />
+    </dependentAssembly>
     ```
 1. Refresh the page and you should see the DNN site again. 🤞
 1. Install the `DnnVaultApi` module in the DNN instance.
@@ -184,7 +178,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
 1. Open Dev Tools and navigate to the Console tab.
 1. Run the following JavaScript code to test the API by creating a new secret named "DnnVaultApiTestValue" with a value of "SuperSecretValueHandleWithCare":
     ```javascript
-    const url = '/DowdianKeyVault/API/DnnVaultApi/DnnVaultApi/CreateSecret?secretName=DnnVaultApiTestValue&secretValue=SuperSecretValueHandleWithCare';
+    const url = '/DnnVaultApi/API/DnnVaultApi/DnnVaultApi/CreateSecret?secretName=DnnVaultApiTestValue&secretValue=SuperSecretValueHandleWithCare';
     const options = {
         method: 'GET',
         headers: {
@@ -217,7 +211,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     ```
 1. Run the following JavaScript code to test the API by retrieving the value of the secret you just created (notice that the only thing changed is the URL):
     ```javascript
-    const url = '/DowdianKeyVault/API/DnnVaultApi/DnnVaultApi/GetSecret?secretName=DnnVaultApiTestValue';
+    const url = '/DnnVaultApi/API/DnnVaultApi/DnnVaultApi/GetSecret?secretName=DnnVaultApiTestValue';
     const options = {
         method: 'GET',
         headers: {
