@@ -191,7 +191,8 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
                 if (response.ok) {
                     return response.json();
                 } else {
-                    console.log('Damn. Something went wrong on the server.')
+                    console.log('Damn. Something went wrong on the server.');
+                    console.log(response);
                     reject(response);
                 }
             })
@@ -200,7 +201,8 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
                 resolve(json);
             })
             .catch(error => {
-                cosole.log('Damn. Something went wrong on the client.')
+                cosole.log('Damn. Something went wrong on the client.');
+                console.log(error);
                 reject(error);
             });
     });
@@ -224,7 +226,8 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
                 if (response.ok) {
                     return response.json();
                 } else {
-                    console.log('Damn. Something went wrong on the server.')
+                    console.log('Damn. Something went wrong on the server.');
+                    console.log(response);
                     reject(response);
                 }
             })
@@ -233,7 +236,8 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
                 resolve(json);
             })
             .catch(error => {
-                cosole.log('Damn. Something went wrong on the client.')
+                cosole.log('Damn. Something went wrong on the client.');
+                console.log(error);
                 reject(error);
             });
     });
