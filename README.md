@@ -141,12 +141,12 @@ Next up, you'll need to create a self-signed certificate to authenticate to the 
     ```powershell
     pvk2pfx -pvk DnnVaultApi.pvk -spc DnnVaultApi.cer -pfx DnnVaultApi.pfx -pi <password>
     ```
-    > Replace `<password>` with a password of your choice.
+    > Replace `<password>` with the password you chose when creating the certificate.
 1. Run the following command to install the certificate on your local machine:
     ```powershell
     certutil -f -p <password> -importpfx .\DnnVaultApi.pfx
     ```
-    > Replace `<password>` with the password you chose in the previous step.
+    > Replace `<password>` with the password you chose when creating the certificate.
 1. Give `NETWORK SERVICE` full permissions on the certificate:
     1. Open the Certificates MMC snap-in by running `certlm.msc` in the Run dialog.
     1. Navigate to `Personal > Certificates`.
