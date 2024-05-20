@@ -65,6 +65,10 @@
               <version>01.00.05</version>
             </assembly>
             <assembly>
+              <name>Microsoft.Bcl.AsyncInterfaces.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
               <name>Microsoft.Identity.Client.dll</name>
               <path>bin</path>
             </assembly>

@@ -140,6 +140,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Diagnostics.DiagnosticSource.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Runtime.CompilerServices.Unsafe.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Numerics.Vectors.dll"></BinInstallInclude>
+      <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\Microsoft.Bcl.AsyncInterfaces.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\Microsoft.Identity.Client.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Text.Encodings.Web.dll"></BinInstallInclude>
       <BinInstallInclude Include="$(MSBuildProjectDirectory)\bin\System.Web.Http.dll"></BinInstallInclude>
