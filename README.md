@@ -79,7 +79,7 @@ To begin, let's get DNN and the project set up.
 
 ![Database permissions](./ReadMeImages/dnn-step-10.png)
 
-11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the configuration/runtime/assemblyBinding section of the web.config file bu adding the following entries ***at the top of the section*** so that the site will work again:
+11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the configuration/runtime/assemblyBinding section of the web.config file by adding the following entries ***at the top of the section*** so that the site will work again:
     ```
     <dependentAssembly>
         <assemblyIdentity name="Azure.Core" publicKeyToken="92742159e12e44c8" />
