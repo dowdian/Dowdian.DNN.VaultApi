@@ -212,7 +212,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     });
     ```
       This should return a message indicating that the secret was created successfully.
-	```json
+	```
 	A new secret with the name DnnVaultApiTestValue has been successfully created in the Vault.
     ```
 1. Run the following JavaScript code to test the API by retrieving the value of the secret you just created (notice that the only thing changed is the URL):
@@ -246,7 +246,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     ```
 
 You should see the following output in the console:
-```json
+```
 SuperSecretValueHandleWithCare
 ```
 
