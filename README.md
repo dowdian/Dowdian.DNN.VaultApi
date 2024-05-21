@@ -155,11 +155,12 @@ Next up, you'll need to create a self-signed certificate to authenticate to the 
 
 ### Azure Setup
 1. If you don't already have an Azure account, you can create one for free [here](https://azure.microsoft.com/en-us/free/). 
-1. If you don't already have a Azure Key Vault associated with you Azure account, you can create one by following the instructions [here](https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli).
-  1. make note of the URI of the Key Vault as you will need this later.
 1. You will also need to create an App Registration in Azure Active Directory to uniquely identify your DNN instance. This will be used to authenticate to the Key Vault. You can follow the instructions [here](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
-   1. Make note of the `Application (client) ID` and the `Directory (tenant) ID` as you will need these later.
-1. Upload the public key of the certificate to the App registration in Azure Active Directory.
+    1. Be certain to add a redirect URI ([details](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-redirect-uri)).
+    1. Upload the public key of the certificate to the App registration in Azure Active Directory ([details](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-certificate)).
+   > Make note of the `Application (client) ID` and the `Directory (tenant) ID` as you will need these later.
+1. If you don't already have a Azure Key Vault associated with you Azure account, you can create one by following the instructions [here](https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli#create-a-key-vault).
+   > make note of the URI of the Key Vault as you will need this later.
 1. Give the App registration the necessary permissions to access the Key Vault. You can follow the instructions [here](https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli#assign-a-role-to-the-app-registration).
 
 Now you should be all set to use the API to Create, Read, Update, and Delete secrets in your Azure Key Vault. 🎉
