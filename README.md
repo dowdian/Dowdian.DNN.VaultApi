@@ -140,7 +140,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     const options = {
         method: 'GET',
         headers: {
-            beforeSend: $.ServicesFramework(0);
+            beforeSend: $.ServicesFramework(0)
         }
     };
     new Promise((resolve, reject) => {
@@ -175,7 +175,7 @@ Now you should be all set to use the API to Create, Read, Update, and Delete sec
     const options = {
         method: 'GET',
         headers: {
-            beforeSend: $.ServicesFramework(0);
+            beforeSend: $.ServicesFramework(0)
         }
     };
     new Promise((resolve, reject) => {

@@ -65,16 +65,8 @@ namespace Dowdian.Modules.DnnVaultApi.Components
                     // Clear the InnerXml.
                     assemblyBindingElement.InnerXml = "";
 
-                    // Prepend the new dependentAssembly elements.
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Text.Encodings.Web", "cc7b13ffcd2ddd51", "0.0.0.0-32767.32767.32767.32767", "4.0.5.1", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Threading.Tasks.Extensions", "cc7b13ffcd2ddd51", "0.0.0.0-32767.32767.32767.32767", "4.2.0.1", nsManager);
+                    // Prepend the new dependentAssembly element.
                     PrependNewNodeIfNotExists(assemblyBindingElement, "Microsoft.Identity.Client", "0a613f4dd989e8ae", "0.0.0.0-32767.32767.32767.32767", "4.61.0.0", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "Microsoft.Bcl.AsyncInterfaces", "cc7b13ffcd2ddd51", "0.0.0.0-32767.32767.32767.32767", "8.0.0.0", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Runtime.CompilerServices.Unsafe", "b03f5f7f11d50a3a", "0.0.0.0-6.0.0.0", "6.0.0.0", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Diagnostics.DiagnosticSource", "cc7b13ffcd2ddd51", "0.0.0.0-8.0.0.1", "8.0.0.1", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Memory", "cc7b13ffcd2ddd51", "0.0.0.0-4.0.1.2", "4.0.1.2", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Web.Http", "31bf3856ad364e35", "0.0.0.0-32767.32767.32767.32767", "5.3.0.0", nsManager);
-                    PrependNewNodeIfNotExists(assemblyBindingElement, "Azure.Core", "92742159e12e44c8", "0.0.0.0-32767.32767.32767.32767", "1.39.0.0", nsManager);
 
                     // Append the original InnerXml.
                     assemblyBindingElement.InnerXml += currentInnerXml;

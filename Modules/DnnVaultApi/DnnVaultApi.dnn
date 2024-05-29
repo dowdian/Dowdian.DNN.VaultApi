@@ -71,9 +71,14 @@
             <assembly>
               <name>Microsoft.Identity.Client.dll</name>
               <path>bin</path>
+              <version>4.61.0.0</version>
             </assembly>
             <assembly>
               <name>System.Diagnostics.DiagnosticSource.dll</name>
+              <path>bin</path>
+            </assembly>
+            <assembly>
+              <name>System.Memory.dll</name>
               <path>bin</path>
             </assembly>
             <assembly>
