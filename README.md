@@ -220,6 +220,6 @@ I would like to thank the creators of the following resources for their help in 
 1. https://stackoverflow.com/questions/52044838/how-to-use-certificate-from-azure-keyvault-with-httpclient-without-extracting-it
 1. https://www.c-sharpcorner.com/article/accessing-azure-key-vaults-using-certification/
 1. https://stackoverflow.com/questions/67646500/azure-api-authenticating-apis-with-a-client-certificate-oauth-2-0
-1. Upendo Ventures for the [Upendo DNN Generator]
-1. The DNN Community for the [DNN Platform]
+1. Upendo Ventures for the [Upendo DNN Generator](https://github.com/UpendoVentures/generator-upendodnn)
+1. The DNN Community for the [DNN Platform](https://github.com/dnnsoftware/Dnn.Platform)
 1. My wife for putting up with me while I worked on this project.
