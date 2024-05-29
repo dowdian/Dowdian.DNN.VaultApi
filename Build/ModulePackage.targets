@@ -58,10 +58,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       Filename="$(DNNFileName).dnn"
       XPathNodeSelector = "/dotnetnuke/packages/package[@name='$(PackageName)']/components/component[@type='Script']/scripts/script[@type='UnInstall']/version"
       NewValue="$(Version)" />
-    <ReplaceXmlNodeText
-      Filename="$(DNNFileName).dnn"
-      XPathNodeSelector = "/dotnetnuke/packages/package[@name='$(PackageName)']/components/component[@type='Module']/eventMessage/attributes/upgradeVersionsList"
-      NewValue="$(Version)" />
 
     <!-- Symbols Manifest -->
     <ReplaceXmlAttributeValue
