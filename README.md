@@ -69,56 +69,13 @@ To begin, let's get DNN and the project set up.
 1. Using your favorite browser, navigate to `http://localhost/DnnVaultApi` to complete the DNN installation process      .
 	- Give the host user a password.
     - Database Setup: `Custom`
-    - Database Typw: `SQL Server/SQL Server Express Database`
+    - Database Type: `SQL Server/SQL Server Express Database`
     - Server Name: `(local)`
 	- Database Name: `YourDatabaseName`
 	- Security: `Integrated`
     - All other values can be left as their default values.
-1. Open the solution in Visual Studio and build it in **Release mode**. This will create the installer files in the `.\Website\Install\Modules` directory.
-### 🚀 Witness the destructive power of this fully *inoperational* DNN instance 🚀
+1. Now, with DNN installed, we can move over to building and installing the DnnVaultApi. Open the solution in Visual Studio and build it in **Release mode**. This will create the installer files in the `.\Website\Install\Modules` directory.
 
-![Database permissions](./ReadMeImages/dnn-step-10.png)
-
-11. This is the part that troubles me the most with the solution as it currently stands! I would very much like to know how to do away with this requirement entirely. Any way, now modify the configuration/runtime/assemblyBinding section of the web.config file by adding the following entries ***at the top of the section*** so that the site will work again:
-    ```
-    <dependentAssembly>
-        <assemblyIdentity name="Azure.Core" publicKeyToken="92742159e12e44c8" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="1.39.0.0" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Web.Http" publicKeyToken="31bf3856ad364e35" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="5.3.0.0" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" />
-        <bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" />
-        <bindingRedirect oldVersion="0.0.0.0-8.0.0.1" newVersion="8.0.0.1" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" />
-        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="Microsoft.Bcl.AsyncInterfaces" publicKeyToken="cc7b13ffcd2ddd51" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="8.0.0.0" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="Microsoft.Identity.Client" publicKeyToken="0a613f4dd989e8ae" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.61.0.0" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Threading.Tasks.Extensions" publicKeyToken="cc7b13ffcd2ddd51" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.2.0.1" />
-    </dependentAssembly>
-    <dependentAssembly>
-        <assemblyIdentity name="System.Text.Encodings.Web" publicKeyToken="cc7b13ffcd2ddd51" />
-        <bindingRedirect oldVersion="0.0.0.0-32767.32767.32767.32767" newVersion="4.0.5.1" />
-    </dependentAssembly>
-    ```
-1. Refresh the page and you should see the DNN site again. 🤞
 1. Install the `DnnVaultApi` module in the DNN instance.
     1. ![Database permissions](./ReadMeImages/dnn-step-13.1.png)
     1. ![Database permissions](./ReadMeImages/dnn-step-13.2.png)
