@@ -121,7 +121,7 @@ To begin, let's get DNN and the project directory structure set up.
 	    GO
 
 	    DECLARE @DatabaseName AS sysname = 'YourDatabaseName'
-	    DECLARE @PathToFiles AS sysname = 'C:\\PathForYourDatabaseFiles\\'
+	    DECLARE @PathToFiles AS sysname = ''C:\PathForYourDatabaseFiles\''
 	    DECLARE @Sql as nvarchar(max)
 
 	    -- If I'm running this script and the database already exists, it's 
