@@ -131,6 +131,10 @@
   <ItemGroup>
     <Content Include="License.txt" />
     <Content Include="module.css" />
+    <Content Include="PersonaBar\css\Dowdian.DnnVaultApi.css" />
+    <Content Include="PersonaBar\Dowdian.DnnVaultApi.html" />
+    <Content Include="PersonaBar\Images\logo.png" />
+    <Content Include="PersonaBar\scripts\Dowdian.DnnVaultApi.js" />
     <Content Include="ReleaseNotes.txt" />
     <Content Include="Images\logo.png" />
   </ItemGroup>
@@ -145,7 +149,6 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -154,6 +157,10 @@
   <ItemGroup>
     <Content Include="NuGet.config" />
     <None Include="packages.config" />
+    <Content Include="PersonaBar\web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PersonaBar\App_LocalResources\Dowdian.DnnVaultApi.resx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>

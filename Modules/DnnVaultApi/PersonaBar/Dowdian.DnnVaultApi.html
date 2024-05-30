@@ -1,0 +1,52 @@
+﻿<div class="dnn-persona-bar-page-header">
+    <h3>Dowdian Settings</h3>
+    <div class="children">
+        <button id="do-something" class="dnn-ui-common-button large" role="secondary">Do something</button>
+        <button id="do-something-else" hidden="hidden" class="dnn-ui-common-button large" role="primary">Do something else</button>
+    </div>
+</div>
+<br />
+<div class="dnn-grid-cell dnn-persona-bar-page-body" style="width:100%">
+    <div>
+        <div id="dowdian-configuration">
+            <div id="dowdian-env-vars" style="font-size:2em;color:green">Azure Key Vault Values</div>
+            <p>Accountancy Studio uses Azure KeyVault to store sensitive data, like keys and passwords. The values below configure the connection to the KeyVault.</p>
+            <p><span style="color:red">Take a backup of your web.config, if something goes wrong use your backup.</span> Accountancy Studio will be making changes to your web.config when everything is configured correctly.</p>
+            <br />
+            <div class="field">
+                <label class="label">Application (client) ID</label>
+                <div class="control">
+                    <input id="dowdian-client-id" class="input" autocomplete="false" type="text" placeholder="00000000-0000-0000-0000-000000000000">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Directory (tenant) ID</label>
+                <div class="control">
+                    <input id="dowdian-directory-id" class="input" autocomplete="false" type="text" placeholder="00000000-0000-0000-0000-000000000000">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Thumbprint</label>
+                <div class="control">
+                    <input id="dowdian-client-secret" class="input" autocomplete="false" type="password" placeholder="**************">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Vault URI</label>
+                <div class="control">
+                    <input id="dowdian-key-vault-url" class="input" autocomplete="false" type="text" placeholder="https://******.vault.azure.net">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link" id="keymaster-save-config">Save</button>
+                    <button class="button is-text" id="keymaster-test-config">Test</button>
+                    <!-- We should test this all client side -->
+                </div>
+            </div>
+        </div>
+    </div>

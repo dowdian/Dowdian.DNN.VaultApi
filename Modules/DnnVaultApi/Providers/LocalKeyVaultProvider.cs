@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Web.Configuration;
+using DotNetNuke.Services.Exceptions;
 using Dowdian.Modules.DnnVaultApi.Models;
 
 namespace Dowdian.Modules.DnnVaultApi.Providers
@@ -14,7 +15,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// This class reads the defined config section (if available) and stores it locally in the configurationSection variable.
     /// This config data is available by calling QuidProKeys.GetKeys().
     /// </summary>
-    public class LocalKeyVaultProvider : IKeyVaultProvider
+    public class LocalKeyVaultProvider : KeyVaultProviderBase
     {
         ///// <summary>
         ///// The QuidPro Configuration File
@@ -45,7 +46,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// The element collection that make up the QuidPro Configuration Section
         /// </summary>
         /// <returns>Dictionary of string, string</returns>
-        public KeyValuePair<string, string> GetSecret(string secretName)
+        public override KeyValuePair<string, string> GetSecret(string secretName)
         {
             var tinyConfigurationFile = WebConfigurationManager.OpenWebConfiguration("~/DesktopModules/MVC/Dowdian.Modules.DnnVaultApi");
             var tinyConfigurationSection = (LocalSecretsSection)tinyConfigurationFile.GetSection("appSecrets");
@@ -61,27 +62,72 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             return new KeyValuePair<string, string>();
         }
 
-        public bool CreateSecret(string secretName, string secretValue)
+        public override bool CreateSecret(string secretName, string secretValue)
         {
             throw new NotImplementedException();
         }
 
-        public bool UpdateSecret(string secretName, string secretValue)
+        public override bool UpdateSecret(string secretName, string secretValue)
         {
             throw new NotImplementedException();
         }
 
-        public bool DeleteSecret(string secretName)
+        public override bool DeleteSecret(string secretName)
         {
             throw new NotImplementedException();
         }
 
-        public bool RestoreSecret(string secretName)
+        public override bool RestoreSecret(string secretName)
         {
             throw new NotImplementedException();
         }
 
-        public bool PurgeSecret(string secretName)
+        public override bool PurgeSecret(string secretName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EncryptAppSecrets()
+        {
+            try
+            {
+                var moduleConfig = WebConfigurationManager.OpenWebConfiguration("~/DesktopModules/DnnVaultApi");
+                var appSecretsSection = moduleConfig.GetSection("appSecrets");
+                if (appSecretsSection == null)
+                {
+                    var appSecrets = new LocalSecretsSection();
+                    moduleConfig.Sections.Add("appSecrets", appSecrets);
+                    moduleConfig.Save();
+                }
+
+                // Encrypt the appSecrets section.
+                if (!appSecretsSection.SectionInformation.IsProtected)
+                {
+                    appSecretsSection.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
+                    appSecretsSection.SectionInformation.ForceSave = true;
+                    moduleConfig.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
+        }
+
+            public bool DecryptAppSecrets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EncryptConnectionStrings()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DecryptConnectionStrings()
         {
             throw new NotImplementedException();
         }

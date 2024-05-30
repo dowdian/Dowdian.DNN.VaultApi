@@ -2,6 +2,8 @@ using System.Configuration;
 using System.Web.Configuration;
 using System.Xml;
 using DotNetNuke.Entities.Modules;
+using Dowdian.Modules.DnnVaultApi.Models;
+using Dowdian.Modules.DnnVaultApi.Repositories;
 
 namespace Dowdian.Modules.DnnVaultApi.Components
 {
@@ -41,7 +43,7 @@ namespace Dowdian.Modules.DnnVaultApi.Components
         private string Upgrade_01_00_00()
         {
             // Configure the application for first time use.
-            //Add the assemblyBinding nodes to the web.config file.
+            // Add the assemblyBinding nodes to the web.config file.
             Configuration config = WebConfigurationManager.OpenWebConfiguration("~");
             ConfigurationSection runtimeSection = config.GetSection("runtime");
             if (runtimeSection != null)
@@ -79,6 +81,13 @@ namespace Dowdian.Modules.DnnVaultApi.Components
                     config.Save();
                 }
             }
+
+            // encrypt the connection string
+            SecretsRepository.Instance.EncryptConnectionStrings();
+
+            // Encrypt the appSecrets section in the module web.config file.
+            SecretsRepository.Instance.EncryptAppSecrets();
+
             return "Configured the application for first time use.";
         }
 

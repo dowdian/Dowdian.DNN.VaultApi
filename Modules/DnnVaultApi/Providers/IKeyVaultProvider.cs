@@ -3,50 +3,22 @@
 namespace Dowdian.Modules.DnnVaultApi.Providers
 {
     /// <summary>
-    /// Interface for Key Vault Providers
+    /// Base class for Key Vault Providers
     /// </summary>
-    public interface IKeyVaultProvider
+    public abstract class KeyVaultProviderBase
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        bool CreateSecret(string secretName, string secretValue);
+        public abstract bool CreateSecret(string secretName, string secretValue);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <returns></returns>
-        KeyValuePair<string, string> GetSecret(string secretName);
+        public abstract KeyValuePair<string, string> GetSecret(string secretName);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        /// <returns></returns>
-        bool UpdateSecret(string secretName, string secretValue);
+        public abstract bool UpdateSecret(string secretName, string secretValue);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        bool DeleteSecret(string secretName);
+        public abstract bool DeleteSecret(string secretName);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <returns></returns>
-        bool RestoreSecret(string secretName);
+        public abstract bool RestoreSecret(string secretName);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <returns></returns>
-        bool PurgeSecret(string secretName);
+        public abstract bool PurgeSecret(string secretName);
+
+        // You can add additional non-abstract methods here
     }
 }

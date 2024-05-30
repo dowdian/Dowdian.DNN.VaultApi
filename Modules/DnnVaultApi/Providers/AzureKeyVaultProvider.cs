@@ -18,14 +18,14 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// <summary>
     /// AzureKeyVaultCertificationHelper
     /// </summary>
-    public class AzureKeyVaultProvider : IKeyVaultProvider
+    public class AzureKeyVaultProvider : KeyVaultProviderBase
     {
         /// <summary>
         /// GetSecret
         /// </summary>
         /// <param name="secretName"></param>
         /// <returns></returns>
-        public KeyValuePair<string, string> GetSecret(string secretName)
+        public override KeyValuePair<string, string> GetSecret(string secretName)
         {
             var client = GetClient();
             var secret = client.GetSecret(secretName);
@@ -37,7 +37,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// </summary>
         /// <param name="secretName"></param>
         /// <param name="secretValue"></param>
-        public bool CreateSecret(string secretName, string secretValue)
+        public override bool CreateSecret(string secretName, string secretValue)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// DeleteSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public bool DeleteSecret(string secretName)
+        public override bool DeleteSecret(string secretName)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// RestoreSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public bool RestoreSecret(string secretName)
+        public override bool RestoreSecret(string secretName)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// PurgeSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public bool PurgeSecret(string secretName)
+        public override bool PurgeSecret(string secretName)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// </summary>
         /// <param name="secretName"></param>
         /// <param name="secretValue"></param>
-        public bool UpdateSecret(string secretName, string secretValue)
+        public override bool UpdateSecret(string secretName, string secretValue)
         {
             return CreateSecret(secretName, secretValue);
         }

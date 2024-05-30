@@ -18,10 +18,11 @@
     <ItemGroup>
       <Manifest Include="*.dnn;*.dnn5;*.dnn6" Exclude="*_Symbols.dnn" />
       <TextFiles Include="*.txt" Exclude="releasenotes.txt;license.txt" />
-      <SourceFiles Include="*.css;*.htm;*.html" />
+      <SourceFiles Include="*.css;*.htm;*.html" Exclude="PersonaBar/**" />
       <Views Include="*.ascx;" />
       <ResourceFiles Include="App_LocalResources/*.resx" />
-      <Images Include="Images/**/*.*" />
+      <PersonaBar Include="PersonaBar/**/*.*" />
+	  <Images Include="Images/**/*.*" />
       <JsFiles Include="js/**/*.*" />
       <Styles Include="Styles/**/*.*" />
       <MvcViews Include="Views/**/*.*" />
@@ -66,5 +67,6 @@
     <Copy SourceFiles="@(Libraries)" DestinationFolder="$(WebsitePath)\bin" />
     <Copy SourceFiles="@(Config)" DestinationFolder="$(FullModulePath)" />
     <Copy SourceFiles="@(DataProvider)" DestinationFolder="$(FullModulePath)\Providers\DataProviders\SqlDataProvider" />
+	<Copy SourceFiles="@(PersonaBar)" DestinationFolder="$(WebsitePath)\DesktopModules\Admin\Dnn.PersonaBar\Modules\Dowdian.DnnVaultApi\%(RecursiveDir)" />
   </Target>
 </Project>
