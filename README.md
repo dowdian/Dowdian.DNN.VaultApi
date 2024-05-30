@@ -5,7 +5,7 @@
 >
 >These instructions are accurate as of May 30, 2024. If you're reading this in the future (which I presume you are), you may need to adjust the instructions to match the current state of the Azure portal. This is what made creating this project so damn hard. _All_ the instructions, tutorials and sample projects I could find were convoluted and/or out of date. This goal of this project is to create a simple project that people (i.e: me) can learn from.
 
-This document is (or will be) boken up into four sections:
+This document is (or will be) boken up into six sections:
 1. [Certificate Setup](#certificates) - You'll need to this no matter how you want to use this solution.
 1. [Azure Key Vault Setup](#azuresetup) - Also required no matter which path you choose, this is for setting up the Azure Key Vault and the App Registration in Azure Entra (formerly Active Directory).
 1. [Installing the module locally](#localinstall) - This is for using the API in a development environment on your local machine or on a provisioned server.
