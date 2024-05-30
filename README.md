@@ -121,7 +121,7 @@ To begin, let's get DNN and the project directory structure set up.
 	    GO
 
 	    DECLARE @DatabaseName AS sysname = 'YourDatabaseName'
-	    DECLARE @PathToFiles AS sysname = ''C:\PathForYourDatabaseFiles\''
+	    DECLARE @PathToFiles AS sysname = 'C:\Path\For\Your\Database\Files'
 	    DECLARE @Sql as nvarchar(max)
 
 	    -- If I'm running this script and the database already exists, it's 
@@ -140,8 +140,8 @@ To begin, let's get DNN and the project directory structure set up.
 
 	    -- Now, with a truely clean slate, create a new database.
 	    SET @Sql = 'CREATE DATABASE ' + @DatabaseName + ' CONTAINMENT = NONE 
-		    ON  PRIMARY ( NAME = N''' + @DatabaseName + ''', FILENAME = N''' + @PathToFiles + @DatabaseName + '.mdf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
-		    LOG ON ( NAME = N''' + @DatabaseName + '_log'', FILENAME = N''' + @PathToFiles + @DatabaseName + '_log.ldf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
+		    ON  PRIMARY ( NAME = N''' + @DatabaseName + ''', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '.mdf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
+		    LOG ON ( NAME = N''' + @DatabaseName + '_log'', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '_log.ldf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
 		    WITH LEDGER = OFF'
 	    EXEC (@Sql)
 
@@ -153,7 +153,7 @@ To begin, let's get DNN and the project directory structure set up.
 	    EXEC (@Sql)
 	    GO
     ```
-	> Replace `YourDatabaseName` and `PathForYourDatabaseFiles` with appropriate values.
+	> Replace `YourDatabaseName` and `Path\For\Your\Database\Files` with appropriate values.
 
     This should result in a lovely new database, seen here in SSMS, all set up for IIS to use it, which is good, because IIS is next.
 
