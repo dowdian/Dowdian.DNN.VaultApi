@@ -1,38 +1,9 @@
-﻿//using Azure.Identity;
-//using Azure.Security.KeyVault.Secrets;
-//using System;
-//using System.Configuration;
-//using System.Threading.Tasks;
-
-//namespace Dowdian.Modules.DowdianDnnVaultApi.Providers
-//{
-//    public class AzureKeyVaultCertificationHelper
-//    {
-//        public static async Task<string> GetAccessToken(string authority, string resource, string scope)
-//        {
-//            var credential = new DefaultAzureCredential();
-//            var token = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext(new[] { scope }));
-
-//            return token.Token;
-//        }
-
-//        public static string GetKeyVaultSecret(string secretNode)
-//        {
-//            var secretClient = new SecretClient(new Uri(ConfigurationManager.AppSettings["VaultUrl"]), new DefaultAzureCredential());
-
-//            var secretUri = $"{ConfigurationManager.AppSettings["VaultUrl"]}/secrets/{secretNode}";
-//            var secret = secretClient.GetSecret(secretUri);
-
-//            return secret.Value.Value;
-//        }
-//    }
-//}
-
-// <copyright file="DowdianApiController.cs" company="Dowdian SRL">
+﻿// <copyright file="DowdianApiController.cs" company="Dowdian SRL">
 // Copyright (c) Dowdian SRL. All rights reserved.
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
 using System.Net.Http;
@@ -40,24 +11,25 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using DotNetNuke.Services.Exceptions;
 
 namespace Dowdian.Modules.DnnVaultApi.Providers
 {
     /// <summary>
     /// AzureKeyVaultCertificationHelper
     /// </summary>
-    public static class AzureKeyVaultProvider
+    public class AzureKeyVaultProvider : IKeyVaultProvider
     {
         /// <summary>
         /// GetSecret
         /// </summary>
         /// <param name="secretName"></param>
         /// <returns></returns>
-        public static string GetSecret(string secretName)
+        public KeyValuePair<string, string> GetSecret(string secretName)
         {
             var client = GetClient();
             var secret = client.GetSecret(secretName);
-            return secret.Value.Value;
+            return new KeyValuePair<string, string> (secret.Value.Name, secret.Value.Value);
         }
 
         /// <summary>
@@ -65,40 +37,80 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// </summary>
         /// <param name="secretName"></param>
         /// <param name="secretValue"></param>
-        public static void CreateSecret(string secretName, string secretValue)
+        public bool CreateSecret(string secretName, string secretValue)
         {
-            var client = GetClient();
-            client.SetSecret(secretName, secretValue);
+            try
+            {
+                var client = GetClient();
+                client.SetSecret(secretName, secretValue);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// DeleteSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public static void DeleteSecret(string secretName)
+        public bool DeleteSecret(string secretName)
         {
-            var client = GetClient();
-            client.StartDeleteSecret(secretName);
+            try
+            {
+                var client = GetClient();
+                client.StartDeleteSecret(secretName);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// RestoreSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public static void RestoreSecret(string secretName)
+        public bool RestoreSecret(string secretName)
         {
-            var client = GetClient();
-            client.StartRecoverDeletedSecret(secretName);
+            try
+            {
+                var client = GetClient();
+                client.StartRecoverDeletedSecret(secretName);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// PurgeSecret
         /// </summary>
         /// <param name="secretName"></param>
-        public static void PurgeSecret(string secretName)
+        public bool PurgeSecret(string secretName)
         {
-            var client = GetClient();
-            client.PurgeDeletedSecret(secretName);
+            try
+            {
+                var client = GetClient();
+                client.PurgeDeletedSecret(secretName);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -106,12 +118,12 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// </summary>
         /// <param name="secretName"></param>
         /// <param name="secretValue"></param>
-        public static void UpdateSecret(string secretName, string secretValue)
+        public bool UpdateSecret(string secretName, string secretValue)
         {
-            CreateSecret(secretName, secretValue);
+            return CreateSecret(secretName, secretValue);
         }
 
-        private static SecretClient GetClient()
+        private SecretClient GetClient()
         {
             var thumbPrint = ConfigurationManager.AppSettings["Thumbprint"];
             var tenantId = ConfigurationManager.AppSettings["TenantId"];
@@ -128,7 +140,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             return new SecretClient(new Uri(keyVaultUri), new ClientCertificateCredential(tenantId, clientApplicationId, cert));
         }
 
-        private static X509Certificate2 FindCertificateByThumbprint(string thumbprint)
+        private X509Certificate2 FindCertificateByThumbprint(string thumbprint)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             try

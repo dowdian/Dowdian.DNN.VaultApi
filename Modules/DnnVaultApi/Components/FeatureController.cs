@@ -66,6 +66,7 @@ namespace Dowdian.Modules.DnnVaultApi.Components
                     assemblyBindingElement.InnerXml = "";
 
                     // Prepend the new dependentAssembly element.
+                    PrependNewNodeIfNotExists(assemblyBindingElement, "System.Web.Http", "31bf3856ad364e35", "0.0.0.0-32767.32767.32767.32767", "5.3.0.0", nsManager);
                     PrependNewNodeIfNotExists(assemblyBindingElement, "Microsoft.Identity.Client", "0a613f4dd989e8ae", "0.0.0.0-32767.32767.32767.32767", "4.61.0.0", nsManager);
 
                     // Append the original InnerXml.

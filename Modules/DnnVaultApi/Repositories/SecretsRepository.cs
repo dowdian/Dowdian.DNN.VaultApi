@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
+﻿using System.Collections.Generic;
 using Dowdian.Modules.DnnVaultApi.Providers;
 
 namespace Dowdian.Modules.DnnVaultApi.Repositories
@@ -60,40 +56,58 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
     /// <inheritdoc/>
     public class SecretsRepository
     {
-        /// <inheritdoc/>
-        public string GetSecret(string secretName)
+        private LocalKeyVaultProvider localKeyVaultProvider;
+        private AzureKeyVaultProvider azureKeyVaultProvider;
+
+        /// <summary>
+        /// SecretsRepository
+        /// </summary>
+        public SecretsRepository()
         {
-            return AzureKeyVaultProvider.GetSecret(secretName);
+            localKeyVaultProvider = new LocalKeyVaultProvider();
+        }
+
+        /// <inheritdoc/>
+        public KeyValuePair<string, string> GetSecret(string secretName)
+        {
+            // see if the secret name can be found in the configuration section. If not, return the secret from the Azure Key Vault
+            var localSecret = localKeyVaultProvider.GetSecret(secretName);
+            if (localSecret.Key != string.Empty)
+            {
+                return localSecret;
+            }
+
+            return azureKeyVaultProvider.GetSecret(secretName);
         }
 
         /// <inheritdoc/>
         public void CreateSecret(string secretName, string secretValue)
         {
-            AzureKeyVaultProvider.CreateSecret(secretName, secretValue);
+            azureKeyVaultProvider.CreateSecret(secretName, secretValue);
         }
 
         /// <inheritdoc/>
         public void DeleteSecret(string secretName)
         {
-            AzureKeyVaultProvider.DeleteSecret(secretName);
+            azureKeyVaultProvider.DeleteSecret(secretName);
         }
 
         /// <inheritdoc/>
         public void RestoreSecret(string secretName)
         {
-            AzureKeyVaultProvider.RestoreSecret(secretName);
+            azureKeyVaultProvider.RestoreSecret(secretName);
         }
 
         /// <inheritdoc/>
         public void PurgeSecret(string secretName)
         {
-            AzureKeyVaultProvider.PurgeSecret(secretName);
+            azureKeyVaultProvider.PurgeSecret(secretName);
         }
 
         /// <inheritdoc/>
         public void UpdateSecret(string secretName, string secretValue)
         {
-            AzureKeyVaultProvider.UpdateSecret(secretName, secretValue);
+            azureKeyVaultProvider.UpdateSecret(secretName, secretValue);
         }
 #pragma warning restore SA1600 // Elements should be documented
     }

@@ -95,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PKCS12ProtectedConfigurationProvider">
+      <HintPath>..\..\References\Encryption\PKCS12ProtectedConfigurationProvider.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -115,8 +118,13 @@
   <ItemGroup>
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Controllers\DnnVaultApiController.cs" />
+    <Compile Include="Models\LocalSecretElement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\LocalSecretsSection.cs" />
     <Compile Include="Providers\AzureKeyVaultProvider.cs" />
+    <Compile Include="Models\LocalSecretCollection.cs" />
+    <Compile Include="Providers\IKeyVaultProvider.cs" />
+    <Compile Include="Providers\LocalKeyVaultProvider.cs" />
     <Compile Include="Repositories\SecretsRepository.cs" />
     <Compile Include="RouteMapper.cs" />
   </ItemGroup>
