@@ -21,6 +21,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{70FB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dowdian.Modules.DnnVaultApi", "Modules\DnnVaultApi\Dowdian.Modules.DnnVaultApi.csproj", "{4C757D14-1911-4D7F-99C8-A52C2AAF0354}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadMeImages", "ReadMeImages", "{F45D57A4-A58D-4842-9387-D4734A8065EB}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMeImages\app-registration-certificate.png = ReadMeImages\app-registration-certificate.png
+		ReadMeImages\database-permissions.png = ReadMeImages\database-permissions.png
+		ReadMeImages\exchange-cert-permissions.png = ReadMeImages\exchange-cert-permissions.png
+		ReadMeImages\how-to-build-release.png = ReadMeImages\how-to-build-release.png
+		ReadMeImages\folder-permissions.png = ReadMeImages\folder-permissions.png
+		ReadMeImages\perfectly-adequate-dnn.png = ReadMeImages\perfectly-adequate-dnn.png
+		ReadMeImages\module-install-step-3.png = ReadMeImages\module-install-step-3.png
+		ReadMeImages\module-install-step-2.png = ReadMeImages\module-install-step-2.png
+		ReadMeImages\module-install-step-1.png = ReadMeImages\module-install-step-1.png
+		ReadMeImages\iis-application-pool-permissions.png = ReadMeImages\iis-application-pool-permissions.png
+		ReadMeImages\redirect-uri.png = ReadMeImages\redirect-uri.png
+		ReadMeImages\signature-cert-permissions.png = ReadMeImages\signature-cert-permissions.png
+		ReadMeImages\website-folder-path.png = ReadMeImages\website-folder-path.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +54,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4C757D14-1911-4D7F-99C8-A52C2AAF0354} = {70FB7EDF-2E12-405F-B9CD-8A437E96FB11}
+		{F45D57A4-A58D-4842-9387-D4734A8065EB} = {B51AA4AF-EE33-49E1-B621-DF1BCD22A28C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {79858f17-834e-420f-9010-25d159ba6fb6}

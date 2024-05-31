@@ -1,22 +1,22 @@
 # DNN Azure Key Vault Web API
-## Introduction {#introduction}
+## Introduction
 >__Please Note__: 
 >This solution is broken for the moment because of a _lot_ of breaking fixes all at once. I'm working on fixing it. I'll remove this message when it's ready to go.
 >
 >These instructions are accurate as of May 30, 2024. If you're reading this in the future (which I presume you are), you may need to adjust the instructions to match the current state of the Azure portal. This is what made creating this project so damn hard. _All_ the instructions, tutorials and sample projects I could find were convoluted and/or out of date. This goal of this project is to create a simple project that people (i.e: me) can learn from.
 
 This document is (or will be) boken up into six sections:
-1. [Certificate Creation](#certificates)
+1. [Certificate Creation](#certificates-creation)
     You'll need to this no matter how you want to use this solution.
-1. [Azure Key Vault Setup](#azuresetup)
+1. [Azure Key Vault Setup](#azure-key-vault-setup)
     Also required no matter which path you choose, this is for setting up the Azure Key Vault and the App Registration in Azure Entra (formerly Active Directory).
-1. [Installing the API locally](#localinstall)
+1. [Installing the API locally](#installing-the-api-locally)
     This is for using the API in a development environment on your local machine or on a provisioned server.
-1. [Installing the API in Azure](#azureinstall)
+1. [Installing the API in Azure](#installing-the-api-in-azure)
     This is for using the API in an Azure App Service instance.
-1. [Setting up the development environment](#development)
+1. [Setting up the development environment](#development-environment-setup)
     This is for stepping through or modifying the code, or (if you're feeling _very_ generous) contributing to the project. 🙏
-1. [Using the API](#use)
+1. [Using the API](#using-the-api)
     Once you have the API set up wherever it is, this is how you can use it in your own projects to manage secrets either locally in a web.config or in the Azure Key Vault.
 
 This project is at the proof of concept stage. The end goal is to easily manage secrets stored in DNN in the most secure ways possible. There may well be some obvious gaps. Please point them out with kindness.
@@ -28,7 +28,7 @@ This solution:
  - Does not modify the schema of the DNN database.
  - Can be used either in a development environemnt (localhost), in a self-hosted server situation, or in an Azure App Service instance. These instructions focus on a localhost setup (for now).
 
-## Certificate Creation {#certificates}
+## Certificates Creation
 You'll need to create two self-signed certificates. One to authenticate to the Key Vault and the second to encrypt and decrypt sections of the web.config. 
 >In the context of certificates, there are generally two types of keys: signature keys and exchange keys.
 > - Signature keys are used to create digital signatures for authenticity and integrity. They are used to verify that data hasn't been tampered with and that it originates from the specified source.
@@ -94,13 +94,13 @@ Now you should have _eight_ files in your certificates folder and this should be
 3. Give the App registration the necessary permissions to access the Key Vault. You can follow the instructions [here](https://learn.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli#assign-a-role-to-the-app-registration).
 
 
-## Installing the API locally {#localinstall}
+## Installing the API locally
 I'll write this section up after I add the automatic build and install scripts. For now, you can follow the instructions in the [Development Environment Setup](#development) section to get the API up and running on your local machine.
 
-## Installing the API in Azure {#azureinstall}
+## Installing the API in Azure
 Here again, I'll write this section up after I add the automatic build and install scripts. For now, you can follow the instructions in the [Development Environment Setup](#development) section to get the API up and running on your local machine.
 
-## Development Environment Setup {#development}
+## Development Environment Setup
 This solution was built using the [Upendo DNN Generator](https://github.com/UpendoVentures/generator-upendodnn#readme). If you're already familiar you'll have a bit of a head start, but if you're not don't worry. We'll walk through the set up from the beginning.
 
 One more note before we get started, In order for the IIS process (or an Azure App Service for that matter) to have access to the certificates, the certificates _have_ to be associated with a user. You can create your own local user if you like with just exactly the right premissions for your solution, _or_ just use `NETWORK SERVICE`, which has a very nice mix of **enough permissions to do what we need to do** and **easy-peasy**. In this I choose the easy way.
@@ -111,49 +111,52 @@ To begin, let's get DNN and the project directory structure set up.
 1. Create a new folder in the root of the solution called `Website`.
 1. Give the `NETWORK SERVICE` account full permissions on the `Website` directory to allow IIS to read and write to the directory.
 
-    ![Folder permissions](./ReadMeImages/dnn-step-01.png)
+    ![Folder permissions](./ReadMeImages/folder-permissions.png)
 1. Unzip a [fresh copy of DNN](https://github.com/dnnsoftware/Dnn.Platform/releases) into the new `Website` directory.
 
 ### Database setup
 1. Create (or overwrite!) a database in your local SQL Server instance and allow IIS to attach to it using the `NETWORK SERVICE` account using the following SQL script:
     ```sql
-	USE [master]
-	GO
+    USE [master]
+    GO
 
-	DECLARE @DatabaseName AS sysname = 'YourDatabaseName'
-	DECLARE @PathToFiles AS sysname = 'C:\Path\For\Your\Database\Files'
-	DECLARE @Sql as nvarchar(max)
+    DECLARE @DatabaseName AS sysname = 'YourDatabaseName'
+    DECLARE @PathToFiles AS sysname = 'C:\Path\To\Your\Database\Files'
+    DECLARE @Sql as nvarchar(max)
 
-	-- If I'm running this script and the database already exists, it's 
-	-- because I screwed up my development environment and I need to start over.
-	-- If I delete something I shouldn't have, well, that's on me.
-	IF EXISTS (select * from sys.databases where name = @DatabaseName)
-	BEGIN
-		SET @Sql = 'ALTER DATABASE ' + @DatabaseName + ' SET  SINGLE_USER WITH ROLLBACK IMMEDIATE'
-		EXEC (@Sql)
+    -- If I'm running this script and the database already exists, it's 
+    -- because I screwed up my development environment and I need to start over.
+    -- If I delete something I shouldn't have, well, that's on me.
+    IF EXISTS (select * from sys.databases where name = @DatabaseName)
+    BEGIN
+        -- Kick everyone out.
+        SET @Sql = 'ALTER DATABASE ' + @DatabaseName + ' SET  SINGLE_USER WITH ROLLBACK IMMEDIATE'
+        EXEC (@Sql)
 
-		EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = @DatabaseName
+        -- Remove any backup history that may have accumulated
+        EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = @DatabaseName
 
-		SET @Sql = 'DROP DATABASE ' + @DatabaseName
-		EXEC (@Sql)
-	END
+        -- Delete the database an everything in it.
+        SET @Sql = 'DROP DATABASE ' + @DatabaseName
+        EXEC (@Sql)
+    END
 
-	-- Now, with a truely clean slate, create a new database.
-	SET @Sql = 'CREATE DATABASE ' + @DatabaseName + ' CONTAINMENT = NONE 
-		ON  PRIMARY ( NAME = N''' + @DatabaseName + ''', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '.mdf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
-		LOG ON ( NAME = N''' + @DatabaseName + '_log'', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '_log.ldf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
-		WITH LEDGER = OFF'
-	EXEC (@Sql)
+    -- Now, with a truely clean slate, create a new database.
+    SET @Sql = 'CREATE DATABASE ' + @DatabaseName + ' CONTAINMENT = NONE 
+        ON  PRIMARY ( NAME = N''' + @DatabaseName + ''', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '.mdf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
+        LOG ON ( NAME = N''' + @DatabaseName + '_log'', FILENAME = N''' + @PathToFiles + '\' + @DatabaseName + '_log.ldf'', SIZE = 8192KB , FILEGROWTH = 65536KB ) 
+        WITH LEDGER = OFF'
+    EXEC (@Sql)
 
-	-- Lastly, let's give full permissions to NETWORK SERVICE to access our new database.
-	SET @Sql = 'USE ' + @DatabaseName + ' 
-		CREATE USER [NT AUTHORITY\NETWORK SERVICE]
-		ALTER AUTHORIZATION ON SCHEMA::[db_owner] TO [NT AUTHORITY\NETWORK SERVICE]
-		ALTER ROLE [db_owner] ADD MEMBER [NT AUTHORITY\NETWORK SERVICE]'
-	EXEC (@Sql)
-	GO
+    -- Lastly, let's give full permissions to NETWORK SERVICE to access our new database.
+    SET @Sql = 'USE ' + @DatabaseName + ' 
+        CREATE USER [NT AUTHORITY\NETWORK SERVICE]
+        ALTER AUTHORIZATION ON SCHEMA::[db_owner] TO [NT AUTHORITY\NETWORK SERVICE]
+        ALTER ROLE [db_owner] ADD MEMBER [NT AUTHORITY\NETWORK SERVICE]'
+    EXEC (@Sql)
+    GO
     ```
-	> Replace `YourDatabaseName` and `Path\For\Your\Database\Files` with appropriate values.
+	> Replace `YourDatabaseName` and `Path\To\Your\Database\Files` with appropriate values.
 
     This should result in a lovely new database, seen here in SSMS, all set up for IIS to use it, which is good, because IIS is next.
 
@@ -162,11 +165,13 @@ To begin, let's get DNN and the project directory structure set up.
 ### IIS Setup
 3. Open IIS Manager and add an Application under the Default Web Site with the following settings:
 	- Alias: `DnnVaultApi`
-	- Physical Path: `C:\PathToYourProjectDirectory\Website`
+	- Physical Path: `C:\Path\To\Your\Project\Directory\Website`
         > Replace `PathToYourProjectDirectory` with the appropriate value.
 	- Application Pool: `DefaultAppPool`
 	    > Note: If you already have applications running under your DefaultAppPool, you may want to create a new AppPool for this application.
 4. Modify the DefaultAppPool (or the AppPool of your choice) to use the `NETWORK SERVICE` account as its identity.
+
+    ![IIS Application Pool Permissions](./ReadMeImages/iis-application-pool-permissions.png)
 
 ### Certificates Setup
 1. Run the following commands in an Administrator PowerShell console to install the certificates on your local machine:
@@ -206,17 +211,17 @@ Seriously, I can't believe you're still with me!!! Hang on! We're almost there.
 
 3. Install the `DnnVaultApi` module in the DNN instance.
     
-    ![Module Install Step 1](./ReadMeImages/dnn-step-13.1.png)
+    ![Module Install Step 1](./ReadMeImages/module-install-step-1.png)
 
-    ![Module Install Step 2](./ReadMeImages/dnn-step-13.2.png)
+    ![Module Install Step 2](./ReadMeImages/module-install-step-2.png)
 
-    ![Module Install Step 3](./ReadMeImages/dnn-step-13.3.png)
+    ![Module Install Step 3](./ReadMeImages/module-install-step-3.png)
 
 You made it!!! We're all done! Now you should be all set to use the API to Create, Read, Update, and Delete secrets both locally in a web.config file in your Azure Key Vault. 🎉
 
-If you ready to jump right into the code, rebuild the application in debug mode and attach the debugger to the IIS process. You can set breakpoints in the code to see how it works.
+If you're ready to jump right into the code, rebuild the application in debug mode and attach your debugger to IIS. You can set breakpoints in the code and see how it works. (...or doesn't work. Results may vary.)
 
-## Using the API {#use}
+## Using the API
 1. First, you'll need to make one more change to your web.config file. Add the following app settings to the `<appSettings>` section:
 	```xml
 	  <add key="TenantId" value="[Directory (tenant) ID]" />
