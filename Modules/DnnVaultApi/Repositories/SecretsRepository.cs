@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DotNetNuke.Framework;
 using Dowdian.Modules.DnnVaultApi.Providers;
 
 namespace Dowdian.Modules.DnnVaultApi.Repositories
@@ -11,48 +10,46 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
     public partial interface ISecretsRepository
     {
         /// <summary>
+        /// Create a secret
+        /// </summary>
+        /// <param name="secret">KeyValuePair(string, string) secret</param>
+        /// <returns>bool</returns>
+        bool CreateSecret(KeyValuePair<string, string> secret);
+
+        /// <summary>
         /// Get a secret
         /// </summary>
         /// <param name="secretName"></param>
-        /// <returns></returns>
+        /// <returns>KeyValuePair(string, string)</returns>
         KeyValuePair<string, string> GetSecret(string secretName);
 
         /// <summary>
-        /// Create a secret
+        /// Update the secret
         /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        /// <returns></returns>
-        bool CreateSecret(string secretName, string secretValue);
+        /// <param name="secret">KeyValuePair(string, string) secret</param>
+        /// <returns>bool</returns>
+        bool UpdateSecret(KeyValuePair<string, string> secret);
 
         /// <summary>
         /// Soft delete the secret
         /// </summary>
         /// <param name="secretName"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         bool DeleteSecret(string secretName);
 
         /// <summary>
         /// Restore a deleted secret
         /// </summary>
         /// <param name="secretName"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         bool RestoreSecret(string secretName);
 
         /// <summary>
         /// Purge a deleted secret
         /// </summary>
         /// <param name="secretName"></param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         bool PurgeSecret(string secretName);
-
-        /// <summary>
-        /// Update the secret
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        /// <returns></returns>
-        bool UpdateSecret(string secretName, string secretValue);
 
         /// <summary>
         /// This method will create the appSecrets section in the module Web.config file
@@ -83,56 +80,102 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
     }
 
     /// <inheritdoc/>
-    public class SecretsRepository : ServiceLocator<ISecretsRepository, SecretsRepository>, ISecretsRepository
+    public class SecretsRepository : ISecretsRepository
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         private LocalKeyVaultProvider localKeyVaultProvider;
-        private AzureKeyVaultProvider azureKeyVaultProvider;
+        private KeyVaultProviderBase _secretProvider;
+
+        /// <summary>
+        /// A list of the possible secret hosts.
+        /// </summary>
+        public enum SecretHost
+        {
+            /// <summary>
+            /// This secret is stored locally in the module's web.config file.
+            /// </summary>
+            Local,
+            /// <summary>
+            /// This secret is stored in the Azure Key Vault.
+            /// </summary>
+            Azure,
+            /// <summary>
+            /// This secret is stored in the Bitwarden Vault.
+            /// Not yet supported.
+            /// </summary>
+            Bitwarden,
+        }
+
+        public bool IsInitialized => _secretProvider.IsInitialized;
 
         /// <summary>
         /// SecretsRepository
         /// </summary>
-        public SecretsRepository()
+        public SecretsRepository(SecretHost host)
         {
             localKeyVaultProvider = new LocalKeyVaultProvider();
+            switch (host)
+            {
+                case SecretHost.Local:
+                    _secretProvider = localKeyVaultProvider;
+                    break;
+                case SecretHost.Azure:
+                    _secretProvider = new AzureKeyVaultProvider();
+                    break;
+                case SecretHost.Bitwarden:
+                    _secretProvider = new BitwardenKeyVaultProvider();
+                    break;
+                default:
+                    throw new ArgumentException("Invalid secret host");
+            }
+        }
+
+        public bool CreateSecret(KeyValuePair<string, string> secret)
+        {
+            return _secretProvider.CreateSecret(secret);
         }
 
         public KeyValuePair<string, string> GetSecret(string secretName)
         {
             // see if the secret name can be found in the configuration section. If not, return the secret from the Azure Key Vault
-            var localSecret = localKeyVaultProvider.GetSecret(secretName);
-            if (localSecret.Key != string.Empty)
+            var secret = _secretProvider.GetSecret(secretName);
+            if (secret.Key != string.Empty)
             {
-                return localSecret;
+                return secret;
             }
 
-            return azureKeyVaultProvider.GetSecret(secretName);
+            return _secretProvider.GetSecret(secretName);
         }
 
-        public bool CreateSecret(string secretName, string secretValue)
+        public bool UpdateSecret(KeyValuePair<string, string> secret)
         {
-            return azureKeyVaultProvider.CreateSecret(secretName, secretValue);
+            return _secretProvider.UpdateSecret(secret);
         }
 
         public bool DeleteSecret(string secretName)
         {
-            return azureKeyVaultProvider.DeleteSecret(secretName);
+            return _secretProvider.DeleteSecret(secretName);
         }
 
         /// <inheritdoc/>
         public bool RestoreSecret(string secretName)
         {
-            return azureKeyVaultProvider.RestoreSecret(secretName);
+            return _secretProvider.RestoreSecret(secretName);
         }
 
         public bool PurgeSecret(string secretName)
         {
-            return azureKeyVaultProvider.PurgeSecret(secretName);
+            return _secretProvider.PurgeSecret(secretName);
         }
 
-        public bool UpdateSecret(string secretName, string secretValue)
+        public List<string> GetSettingNames()
         {
-            return azureKeyVaultProvider.UpdateSecret(secretName, secretValue);
+            return _secretProvider.GetSettingNames();
+        }
+
+        public bool ConfimSettings(Dictionary<string, string> settings)
+        {
+            return _secretProvider.ConfirmSettings(settings);
         }
 
         public bool EncryptAppSecrets()
@@ -153,11 +196,6 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
         public bool DecryptConnectionStrings()
         {
             return localKeyVaultProvider.DecryptConnectionStrings();
-        }
-
-        protected override Func<ISecretsRepository> GetFactory()
-        {
-            return () => new SecretsRepository();
         }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning restore SA1600 // Elements should be documented

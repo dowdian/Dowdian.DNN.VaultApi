@@ -5,13 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Net;
-using System.Net.Http;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using DotNetNuke.Services.Exceptions;
+using Dowdian.Modules.DnnVaultApi.Models;
+using Dowdian.Modules.DnnVaultApi.Repositories;
+using static Dowdian.Modules.DnnVaultApi.Repositories.SecretsRepository;
 
 namespace Dowdian.Modules.DnnVaultApi.Providers
 {
@@ -20,29 +20,26 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// </summary>
     public class AzureKeyVaultProvider : KeyVaultProviderBase
     {
-        /// <summary>
-        /// GetSecret
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <returns></returns>
-        public override KeyValuePair<string, string> GetSecret(string secretName)
+        private SecretClient client;
+
+        public AzureKeyVaultProvider()
         {
-            var client = GetClient();
-            var secret = client.GetSecret(secretName);
-            return new KeyValuePair<string, string> (secret.Value.Name, secret.Value.Value);
+            client = GetClient();
+            if (client != null)
+            {
+                this.IsInitialized = true;
+            }
         }
 
         /// <summary>
         /// CreateSecret
         /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        public override bool CreateSecret(string secretName, string secretValue)
+        /// <param name="secret">KeyValuePair(string, string) secret</param>
+        public override bool CreateSecret(KeyValuePair<string, string> secret)
         {
             try
             {
-                var client = GetClient();
-                client.SetSecret(secretName, secretValue);
+                client.SetSecret(secret.Key, secret.Value);
             }
             catch (Exception ex)
             {
@@ -54,6 +51,27 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         }
 
         /// <summary>
+        /// GetSecret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <returns></returns>
+        public override KeyValuePair<string, string> GetSecret(string secretName)
+        {
+            var secret = client.GetSecret(secretName);
+            return new KeyValuePair<string, string> (secret.Value.Name, secret.Value.Value);
+        }
+
+        /// <summary>
+        /// UpdateSecret
+        /// </summary>
+        /// <param name="secretName"></param>
+        /// <param name="secretValue"></param>
+        public override bool UpdateSecret(KeyValuePair<string, string> secret)
+        {
+            return CreateSecret(secret);
+        }
+
+        /// <summary>
         /// DeleteSecret
         /// </summary>
         /// <param name="secretName"></param>
@@ -61,7 +79,6 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         {
             try
             {
-                var client = GetClient();
                 client.StartDeleteSecret(secretName);
             }
             catch (Exception ex)
@@ -81,7 +98,6 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         {
             try
             {
-                var client = GetClient();
                 client.StartRecoverDeletedSecret(secretName);
             }
             catch (Exception ex)
@@ -101,7 +117,6 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         {
             try
             {
-                var client = GetClient();
                 client.PurgeDeletedSecret(secretName);
             }
             catch (Exception ex)
@@ -113,55 +128,89 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             return true;
         }
 
-        /// <summary>
-        /// UpdateSecret
-        /// </summary>
-        /// <param name="secretName"></param>
-        /// <param name="secretValue"></param>
-        public override bool UpdateSecret(string secretName, string secretValue)
+        public override List<string> GetSettingNames()
         {
-            return CreateSecret(secretName, secretValue);
+            return new List<string>
+            {
+                "SignatureThumbprint",
+                "AzureTenantId",
+                "AzureClientApplicationId",
+                "AzureKeyVaultUri"
+            };
         }
+
+        public override bool ConfirmSettings(Dictionary<string, string> settings)
+        {
+            var signatureThumbprint = settings["SignatureThumbprint"];
+            var azureTenantId = settings["AzureTenantId"];
+            var azureClientApplicationId = settings["AzureClientApplicationId"];
+            var azureKeyVaultUri = settings["AzureKeyVaultUri"];
+
+            var secretClient = GetClient(signatureThumbprint, azureTenantId, azureClientApplicationId, azureKeyVaultUri);
+            if (secretClient == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override bool SaveSettings(Dictionary<string, string> settings)
+        {
+            var localKeyVaultProvider = new LocalKeyVaultProvider();
+            if (this.ConfirmSettings(settings))
+            {
+                foreach (var setting in settings)
+                {
+                    var secret = localKeyVaultProvider.GetSecret(setting.Key);
+                    if (!string.IsNullOrEmpty(secret.Key))
+                    {
+                        localKeyVaultProvider.UpdateSecret(setting);
+                    }
+                    else
+                    {
+                        localKeyVaultProvider.CreateSecret(setting);
+                    }
+                }
+
+                return true;
+            }
+
+            Exceptions.LogException(new Exception("Settings are not valid."));
+            return false;
+        }
+
+        // Private methods
 
         private SecretClient GetClient()
         {
-            var thumbPrint = ConfigurationManager.AppSettings["Thumbprint"];
-            var tenantId = ConfigurationManager.AppSettings["TenantId"];
-            var clientApplicationId = ConfigurationManager.AppSettings["ClientApplicationId"];
-            var keyVaultUri = ConfigurationManager.AppSettings["KeyVaultUri"];
-
-            var cert = FindCertificateByThumbprint(thumbPrint);
-            var httpClient = new HttpClient(new HttpClientHandler
+            try
             {
-                DefaultProxyCredentials = CredentialCache.DefaultCredentials,
-                SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls
-            });
+                var localKeyVaultProvider = new LocalKeyVaultProvider();
+                var thumbPrint = localKeyVaultProvider.GetSecret("SignatureThumbprint").Value;
+                var tenantId = localKeyVaultProvider.GetSecret("AzureTenantId").Value;
+                var clientApplicationId = localKeyVaultProvider.GetSecret("AzureClientApplicationId").Value;
+                var keyVaultUri = localKeyVaultProvider.GetSecret("AzureKeyVaultUri").Value;
+
+                var certificateProvider = new CertificateProvider();
+                var cert = certificateProvider.FindCertificateByThumbprint(thumbPrint);
+
+                return new SecretClient(new Uri(keyVaultUri), new ClientCertificateCredential(tenantId, clientApplicationId, cert));
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+
+        private SecretClient GetClient(string thumbPrint, string tenantId, string clientApplicationId, string keyVaultUri)
+        {
+            var certificateProvider = new CertificateProvider();
+            var cert = certificateProvider.FindCertificateByThumbprint(thumbPrint);
 
             return new SecretClient(new Uri(keyVaultUri), new ClientCertificateCredential(tenantId, clientApplicationId, cert));
         }
 
-        private X509Certificate2 FindCertificateByThumbprint(string thumbprint)
-        {
-            X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-            try
-            {
-                store.Open(OpenFlags.ReadOnly);
-                X509Certificate2Collection col = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
-                if (col == null || col.Count == 0)
-                {
-                    throw new Exception("ERROR: Certificate not found with thumbprint");
-                }
-                return col[0];
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-            finally
-            {
-                store.Close();
-            }
-        }
     }
 }

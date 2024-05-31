@@ -2,7 +2,9 @@
 // Copyright (c) Dowdian SRL. All rights reserved.
 // </copyright>
 
+using System;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 
 namespace Dowdian.Modules.DnnVaultApi.Models
 {
@@ -53,6 +55,96 @@ namespace Dowdian.Modules.DnnVaultApi.Models
         protected override object GetElementKey(ConfigurationElement element)
         {
             return ((LocalSecretElement)element).Name;
+        }
+
+        internal bool Add(LocalSecretElement newSecret)
+        {
+            if (this.Contains(newSecret.Name))
+            {
+                return false;
+            }
+
+            this.BaseAdd(newSecret);
+
+            return true;
+        }
+
+        internal LocalSecretElement Get(string name)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == name)
+                {
+                    return key;
+                }
+            }
+
+            return null;
+        }
+
+        internal void Update(LocalSecretElement secret)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == secret.Name)
+                {
+                    key.Secret = secret.Secret;
+                    return;
+                }
+            }
+        }
+
+        internal void Delete(string name)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == name)
+                {
+                    key.ElementInformation.Properties["Deleted"].Value = true;
+                    return;
+                }
+            }
+        }
+
+        internal bool Purge(string name)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == name)
+                {
+                    this.BaseRemove(key);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal bool Restore(string name)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == name)
+                {
+                    key.ElementInformation.Properties["Deleted"].Value = false;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal bool Contains(string name)
+        {
+            foreach (LocalSecretElement key in this)
+            {
+                if (key.Name == name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

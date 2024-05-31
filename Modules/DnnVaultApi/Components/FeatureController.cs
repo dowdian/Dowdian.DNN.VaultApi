@@ -82,12 +82,6 @@ namespace Dowdian.Modules.DnnVaultApi.Components
                 }
             }
 
-            // encrypt the connection string
-            SecretsRepository.Instance.EncryptConnectionStrings();
-
-            // Encrypt the appSecrets section in the module web.config file.
-            SecretsRepository.Instance.EncryptAppSecrets();
-
             return "Configured the application for first time use.";
         }
 

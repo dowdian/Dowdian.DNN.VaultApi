@@ -207,7 +207,8 @@ Seriously, I can't believe you're still with me!!! Hang on! We're almost there.
     ![Perfectly Adequate DNN](./ReadMeImages/perfectly-adequate-dnn.png)
 
 2. Now, with DNN installed, we can move over to building and installing the DnnVaultApi. Open the solution in Visual Studio and build it in **Release mode**. This will create the installer files in the `.\Website\Install\Modules` directory.
-   ![How to build a release package](./ReadMeImages/how-to-build-release.png)
+   
+    ![How to build a release package](./ReadMeImages/how-to-build-release.png)
 
 3. Install the `DnnVaultApi` module in the DNN instance.
     

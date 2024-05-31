@@ -14,23 +14,23 @@ namespace Dowdian.Modules.DnnVaultApi.Models
     public class LocalSecretElement : ConfigurationElement
     {
         /// <summary>
-        /// Gets or sets name
-        /// </summary>
-        [ConfigurationProperty("name", IsRequired = true)]
-        public string Name
-        {
-            get { return (string)this["name"]; }
-            set { this["name"] = value; }
-        }
-
-        /// <summary>
         /// Gets or sets Secret
         /// </summary>
         [ConfigurationProperty("key", IsRequired = true)]
-        public string Secret
+        public string Name
         {
             get { return (string)this["key"]; }
             set { this["key"] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets name
+        /// </summary>
+        [ConfigurationProperty("value", IsRequired = true)]
+        public string Secret
+        {
+            get { return (string)this["value"]; }
+            set { this["value"] = value; }
         }
     }
 }

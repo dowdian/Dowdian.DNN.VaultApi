@@ -10,6 +10,9 @@ define(['jquery',
             init: function (wrapper, util, params, callback) {
                 utility = util;
 
+                let sf = $.ServicesFramework(0);
+                const url = `${sf.getServiceRoot('DnnVaultApi')}DnnVaultApi/GetDnnVaultSettings`;
+
                 window.dnn.initDnnVaultApi = function initializeDnnVaultApi() {
                     // I don't know how to consume these values
                     return {

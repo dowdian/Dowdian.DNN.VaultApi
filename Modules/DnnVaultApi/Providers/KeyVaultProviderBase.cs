@@ -7,11 +7,13 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// </summary>
     public abstract class KeyVaultProviderBase
     {
-        public abstract bool CreateSecret(string secretName, string secretValue);
+        public bool IsInitialized { get; protected set; } = false;
+
+        public abstract bool CreateSecret(KeyValuePair<string, string> secret);
 
         public abstract KeyValuePair<string, string> GetSecret(string secretName);
 
-        public abstract bool UpdateSecret(string secretName, string secretValue);
+        public abstract bool UpdateSecret(KeyValuePair<string, string> secret);
 
         public abstract bool DeleteSecret(string secretName);
 
@@ -19,6 +21,10 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
 
         public abstract bool PurgeSecret(string secretName);
 
-        // You can add additional non-abstract methods here
+        public abstract List<string> GetSettingNames();
+
+        public abstract bool ConfirmSettings(Dictionary<string, string> settings);
+
+        public abstract bool SaveSettings(Dictionary<string, string> settings);
     }
 }
