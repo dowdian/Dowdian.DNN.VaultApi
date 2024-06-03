@@ -115,6 +115,25 @@
             </resourceFile>
           </resourceFiles>
         </component>
+        <component type="ResourceFile">
+          <resourceFiles>
+            <basePath>DesktopModules/Admin/Dnn.PersonaBar/Modules/DnnVaultApi</basePath>
+            <resourceFile>
+              <name>PersonaBar.zip</name>
+            </resourceFile>
+          </resourceFiles>
+        </component>
+        <component type="PersonaBarMenu">
+          <menu>
+            <identifier>DnnVaultApi</identifier>
+            <moduleName>DnnVaultApi</moduleName>
+            <resourceKey>nav_DnnVaultApi</resourceKey>
+            <path>DnnVaultApi</path>
+            <mobileSupport>true</mobileSupport>
+            <parent>Settings</parent>
+            <order>1000</order>
+          </menu>
+        </component>
       </components>
     </package>
   </packages>

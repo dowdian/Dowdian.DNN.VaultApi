@@ -67,6 +67,6 @@
     <Copy SourceFiles="@(Libraries)" DestinationFolder="$(WebsitePath)\bin" />
     <Copy SourceFiles="@(Config)" DestinationFolder="$(FullModulePath)" />
     <Copy SourceFiles="@(DataProvider)" DestinationFolder="$(FullModulePath)\Providers\DataProviders\SqlDataProvider" />
-	<Copy SourceFiles="@(PersonaBar)" DestinationFolder="$(WebsitePath)\DesktopModules\Admin\Dnn.PersonaBar\Modules\Dowdian.DnnVaultApi\%(RecursiveDir)" />
+	<Copy SourceFiles="@(PersonaBar)" DestinationFolder="$(WebsitePath)\DesktopModules\Admin\Dnn.PersonaBar\Modules\DnnVaultApi\%(RecursiveDir)" />
   </Target>
 </Project>
