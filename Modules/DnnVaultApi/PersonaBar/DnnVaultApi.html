@@ -1,54 +1,104 @@
 ﻿<div id="DnnVaultApi-container" data-init-callback="initDnnVaultApi">
     <div class="dnn-persona-bar-page-header">
-        <h3>DNN Vault API Settings</h3>
+        <h3 class="caption">DNN Vault API Settings</h3>
     </div>
     <br />
     <div class="dnn-grid-cell dnn-persona-bar-page-body" style="width:100%">
-        <div>
-            <div id="dowdian-configuration">
-                <div id="dowdian-env-vars" style="font-size:2em;color:green">Azure Key Vault Values</div>
-                <p>DNN Vault API uses Azure KeyVault to store sensitive data, like keys and passwords. The values below configure the connection to the KeyVault.</p>
-                <hr />
-                <p><span style="color:red">Take a backup of your web.config, if something goes wrong use your backup.</span> </p>
-                <hr />
-                <p>DNN Vault API will be making changes to your web.config when everything is configured correctly.</p>
-                <br />
-                <div class="field">
-                    <label class="label">Application (client) ID</label>
-                    <div class="control">
-                        <input id="dowdian-client-id" class="input" autocomplete="false" type="text" placeholder="00000000-0000-0000-0000-000000000000">
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Directory (tenant) ID</label>
-                    <div class="control">
-                        <input id="dowdian-directory-id" class="input" autocomplete="false" type="text" placeholder="00000000-0000-0000-0000-000000000000">
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Thumbprint</label>
-                    <div class="control">
-                        <input id="dowdian-client-secret" class="input" autocomplete="false" type="password" placeholder="**************">
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Vault URI</label>
-                    <div class="control">
-                        <input id="dowdian-key-vault-url" class="input" autocomplete="false" type="text" placeholder="https://******.vault.azure.net">
-                    </div>
-                </div>
-
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-link" id="keymaster-save-config">Save</button>
-                        <button class="button is-text" id="keymaster-test-config">Test</button>
-                        <!-- We should test this all client side -->
-                    </div>
+        <div id="dowdian-configuration">
+            <p><span style="color:red">Take a backup of your web.config, if something goes wrong use your backup.</span> </p>
+            <br />
+            <div id="dowdian-env-vars" style="font-size:2em;color:green">Local Key Vault Settings</div>
+            <div class="field">
+                <label class="label">Exchange Key Certificate Thumbprint</label>
+                <div class="control">
+                    <input id="local-certificate-thumbprint" class="input" autocomplete="false" type="password" data-host="Local" name="ExchangeThumbprint" placeholder="**************">
                 </div>
             </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link vault-settings-button" id="local-vault-save-config" data-action="save" data-host="Local">Save &amp; Encrypt</button>
+                    <button class="button is-text vault-settings-button" id="local-vault-test-config" data-action="test" data-host="Local">Test</button>
+                </div>
+            </div>
+
+            <div>
+                <div id="save-in-progress" hidden="hidden" class="notification is-info">
+                    <button class="delete"></button>
+                    Saving Configuration . . .
+                </div>
+                <div id="test-in-progess" hidden="hidden" class="notification is-info">
+                    <button class="delete"></button>
+                    Testing Configuration . . .
+                </div>
+                <div id="test-success" hidden="hidden" class="notification is-success">
+                    <button class="delete"></button>
+                    Configuration works! You are all set to encrypt your web.config.
+                </div>
+                <div id="save-success" hidden="hidden" class="notification is-success">
+                    <button class="delete"></button>
+                    Configuration Saved!
+                </div>
+                <div id="test-failure" hidden="hidden" class="notification is-danger">
+                    <button class="delete"></button>
+                    <strong>FAILURE!!</strong> The application was not able to identify your certificate with the thumbprint provided.
+                </div>
+            </div>
+
+            <br />
+            <hr />
+            <br />
+            <div id="dowdian-env-vars" style="font-size:2em;color:green">Azure Key Vault Settings</div>
+            <p>DNN Vault API uses Azure KeyVault to store sensitive data, like keys and passwords. The values below configure the connection to the KeyVault.</p>
+            <br />
+            <p>DNN Vault API will be making changes to your web.config when everything is configured correctly.</p>
+            <br />
+            <div class="field">
+                <label class="label">Application (client) ID</label>
+                <div class="control">
+                    <input id="dowdian-client-id" class="input" autocomplete="false" type="text" data-host="Azure" name="AzureTenantId" placeholder="00000000-0000-0000-0000-000000000000">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Directory (tenant) ID</label>
+                <div class="control">
+                    <input id="dowdian-directory-id" class="input" autocomplete="false" type="text" data-host="Azure" name="AzureClientApplicationId" placeholder="00000000-0000-0000-0000-000000000000">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Signature Key Certificate Thumbprint</label>
+                <div class="control">
+                    <input id="dowdian-client-secret" class="input" autocomplete="false" type="password" data-host="Azure" name="SignatureThumbprint" placeholder="**************">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Vault URI</label>
+                <div class="control">
+                    <input id="dowdian-key-vault-url" class="input" autocomplete="false" type="text" data-host="Azure" name="AzureKeyVaultUri" placeholder="https://******.vault.azure.net">
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link vault-settings-button" id="azure-vault-save-config" data-action="save" data-host="Azure">Save &amp; Connect</button>
+                    <button class="button is-text vault-settings-button" id="azure-vault-test-config" data-action="test" data-host="Azure">Test</button>
+                </div>
+            </div>
+
+            <br />
+            <hr />
+            <br />
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link" id="toggle-connection-string-encryption">Encrypt/Decrypt Connection Strings</button>
+                    <button class="button is-link" id="toggle-secrets-encryption">Encrypt/Decrypt Secrets</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

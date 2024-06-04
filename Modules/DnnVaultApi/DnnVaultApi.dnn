@@ -105,6 +105,11 @@
               <name>System.Threading.Tasks.Extensions.dll</name>
               <path>bin</path>
             </assembly>
+            <assembly>
+              <name>System.Web.Http.dll</name>
+              <version>5.3.0.0</version>
+              <path>bin</path>
+            </assembly>
           </assemblies>
         </component>
         <component type="ResourceFile">

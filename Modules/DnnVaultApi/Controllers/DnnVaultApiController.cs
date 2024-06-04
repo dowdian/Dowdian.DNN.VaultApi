@@ -47,8 +47,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage CreateSecret(SecretHost host, KeyValuePair<string, string> secret)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            SecretsRepository.CreateSecret(secret);
+            var secretsRepository = new SecretsRepository(host);
+            secretsRepository.UpdateSecret(secret);
             var answer = JsonConvert.SerializeObject($"A new secret with the name {secret.Key} has been successfully created in the Vault.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -66,8 +66,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage GetSecret(SecretHost host, string secretName)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            var secret = SecretsRepository.GetSecret(secretName);
+            var secretsRepository = new SecretsRepository(host);
+            var secret = secretsRepository.GetSecret(secretName);
             var answer = JsonConvert.SerializeObject(secret);
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -85,8 +85,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage UpdateSecret(SecretHost host, KeyValuePair<string, string> secret)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            SecretsRepository.UpdateSecret(secret);
+            var secretsRepository = new SecretsRepository(host);
+            secretsRepository.UpdateSecret(secret);
             var answer = JsonConvert.SerializeObject($"The secret with the name {secret.Key} has been successfully updated with a new value.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -104,8 +104,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage DeleteSecret(SecretHost host, string secretName)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            SecretsRepository.DeleteSecret(secretName);
+            var secretsRepository = new SecretsRepository(host);
+            secretsRepository.DeleteSecret(secretName);
             var answer = JsonConvert.SerializeObject($"The secret with the name {secretName} has been successfully soft-delete from the Vault.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -123,8 +123,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage RestoreSecret(SecretHost host, string secretName)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            SecretsRepository.RestoreSecret(secretName);
+            var secretsRepository = new SecretsRepository(host);
+            secretsRepository.RestoreSecret(secretName);
             var answer = JsonConvert.SerializeObject($"The soft-deleted secret with the name {secretName} has been successfully restored into the Vault.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -142,8 +142,8 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         public HttpResponseMessage PurgeSecret(SecretHost host, string secretName)
         {
-            var SecretsRepository = new SecretsRepository(host);
-            SecretsRepository.PurgeSecret(secretName);
+            var secretsRepository = new SecretsRepository(host);
+            secretsRepository.PurgeSecret(secretName);
             var answer = JsonConvert.SerializeObject($"The secret with the name {secretName} has been successfully purged from the Vault.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -159,25 +159,15 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         public HttpResponseMessage GetDnnVaultSettings()
         {
             var settings = new Dictionary<string, string>();
-            var localSecretsRepository = new SecretsRepository(SecretHost.Local);
 
-            // Loop through all the possible SecretHosts
+            // Loop through all the possible SecretHosts and collect their settings
             foreach (SecretHost host in Enum.GetValues(typeof(SecretHost)))
             {
-                // Get the setting names for the current SecretHost
                 var secretsRepository = new SecretsRepository(host);
-
-                // Get the setting names for the current SecretHost
-                var settingNames = secretsRepository.GetSettingNames();
-
-                // Loop through all the setting names and get the value for each setting
-                foreach (var settingName in settingNames)
+                var hostSettings = secretsRepository.GetSettings();
+                foreach (var setting in hostSettings)
                 {
-                    // Get the value for the setting from the module web.config file
-                    var secret = localSecretsRepository.GetSecret($"Dowdian.Modules.DnnVaultApi.{settingName}");
-
-                    // Add the setting name and value to the settings dictionary
-                    settings.Add(settingName, secret.Value);
+                    settings.Add(setting.Key, setting.Value);
                 }
             }
 
@@ -190,15 +180,20 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage TestDnnVaultSettings(Dictionary<string, string> settings)
+        public HttpResponseMessage ReceiveDnnVaultSettings([FromBody] VaultSettingsModel vaultSettings)
         {
             var hosts = new Dictionary<string, bool>();
 
-            // Loop through all the possible SecretHosts
-            foreach (SecretHost host in Enum.GetValues(typeof(SecretHost)))
+            var thisHost = (SecretHost)Enum.Parse(typeof(SecretHost), vaultSettings.Host);
+            var secretsRepository = new SecretsRepository(thisHost);
+
+            if (vaultSettings.Action == "test"  )
             {
-                var SecretsRepository = new SecretsRepository(SecretHost.Local);
-                hosts.Add(host.ToString(), SecretsRepository.ConfimSettings(settings));
+                hosts.Add(thisHost.ToString(), secretsRepository.ConfimSettings(vaultSettings.Settings));
+            }
+            else if (vaultSettings.Action == "save")
+            {
+                hosts.Add(thisHost.ToString(), secretsRepository.SaveSettings(vaultSettings.Settings));
             }
 
             var answer = JsonConvert.SerializeObject(hosts);
@@ -207,40 +202,25 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
             return response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [ValidateAntiForgeryToken]
         // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage UpdateDnnVaultSettings(Dictionary<string, string> settings)
+        public HttpResponseMessage ToggleConnectionStringEncryption()
         {
-            var repostioryList = new List<SecretsRepository> {
-                new SecretsRepository(SecretHost.Local),
-                new SecretsRepository(SecretHost.Azure),
-            };
-
-            foreach (var secretsRepository in repostioryList)
+            var result = string.Empty;
+            var secretsRepository = new SecretsRepository(SecretHost.Local);
+            if (secretsRepository.ConnectionStringsEncrypted)
             {
-                var SecretsRepository = new SecretsRepository(SecretHost.Local);
-                foreach (var setting in settings)
-                {
-                    var newSetting = new KeyValuePair<string, string>($"Dowdian.Modules.DnnVaultApi.{setting.Key}", setting.Value);
-                    SecretsRepository.UpdateSecret(newSetting);
-                }
+                secretsRepository.DecryptConnectionStrings();
+                result = "decrypted";
+            }
+            else
+            {
+                secretsRepository.EncryptConnectionStrings();
+                result = "encrypted";
             }
 
-            var answer = JsonConvert.SerializeObject($"The settings have been successfully updated.");
-            var response = this.Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
-            return response;
-        }
-
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-        // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage EncryptConnectionStrings()
-        {
-            var SecretsRepository = new SecretsRepository(SecretHost.Local);
-            SecretsRepository.EncryptConnectionStrings();
-            var answer = JsonConvert.SerializeObject($"The connection strings have been successfully encrypted.");
+            var answer = JsonConvert.SerializeObject($"The connection strings have been successfully {result}.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
@@ -250,39 +230,22 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         [HttpGet]
         [ValidateAntiForgeryToken]
         // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage DecryptConnectionStrings()
+        public HttpResponseMessage ToggleAppSecretsEncryption()
         {
-            var SecretsRepository = new SecretsRepository(SecretHost.Local);
-            SecretsRepository.DecryptConnectionStrings();
-            var answer = JsonConvert.SerializeObject($"The connection strings have been successfully decrypted.");
+            var result = string.Empty;
+            var secretsRepository = new SecretsRepository(SecretHost.Local);
+            if (secretsRepository.AppSecretsEncrypted)
+            {
+                secretsRepository.DecryptAppSecrets();
+                result = "decrypted";
+            }
+            else
+            {
+                secretsRepository.EncryptAppSecrets();
+                result = "encrypted";
+            }
 
-            var response = this.Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
-            return response;
-        }
-
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-        // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage EncryptAppSecrets()
-        {
-            var SecretsRepository = new SecretsRepository(SecretHost.Local);
-            SecretsRepository.EncryptAppSecrets();
-            var answer = JsonConvert.SerializeObject($"The appSecrets section in the module web.config file has been successfully encrypted.");
-
-            var response = this.Request.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");
-            return response;
-        }
-
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-        // because there is no Authorize attribute, this method defaults to requiring a host user
-        public HttpResponseMessage DecryptAppSecrets()
-        {
-            var SecretsRepository = new SecretsRepository(SecretHost.Local);
-            SecretsRepository.DecryptAppSecrets();
-            var answer = JsonConvert.SerializeObject($"The appSecrets section in the module web.config file has been successfully decrypted.");
+            var answer = JsonConvert.SerializeObject($"The appSecrets section in the module web.config file has been successfully {result}.");
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(answer, System.Text.Encoding.UTF8, "application/json");

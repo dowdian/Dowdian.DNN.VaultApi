@@ -118,7 +118,10 @@
   <ItemGroup>
     <Compile Include="Components\FeatureController.cs" />
     <Compile Include="Controllers\DnnVaultApiController.cs" />
+    <Compile Include="Models\ConfigurationProtectedDataSection.cs" />
     <Compile Include="Models\LocalSecretElement.cs" />
+    <Compile Include="Models\ProviderSettingsCollection.cs" />
+    <Compile Include="Models\VaultSettingsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\LocalSecretsSection.cs" />
     <Compile Include="Providers\BitwardenKeyVaultProvider.cs" />

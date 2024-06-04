@@ -17,33 +17,41 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// </summary>
     public class LocalKeyVaultProvider : KeyVaultProviderBase
     {
-        private Configuration configuration;
+        private Configuration appConfiguration;
 
         private LocalSecretsSection localSecretsSection;
 
-        // A prefix to add to the setting names to avoid conflicts with other secrets.
-        private string prefix = "Dowdian.Modules.DnnVaultApi.";
+        public bool ConnectionStringsEncrypted { get; private set; }
+        public bool AppSecretsEncrypted { get; private set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         public LocalKeyVaultProvider()
         {
-            configuration = WebConfigurationManager.OpenWebConfiguration("~/DesktopModules/MVC/Dowdian.Modules.DnnVaultApi");
+            appConfiguration = WebConfigurationManager.OpenWebConfiguration("~");
 
-            if (configuration == null)
+            if (appConfiguration == null)
             {
                 throw new Exception("Configuration not found.");
             }
 
-            localSecretsSection = (LocalSecretsSection)configuration.GetSection("appSecrets");
+            // Check to see if the connectionStrings section is encrypted.
+            ConnectionStringsEncrypted = appConfiguration.GetSection("connectionStrings").SectionInformation.IsProtected;
 
+            // Get the appSecrets section.
+            localSecretsSection = (LocalSecretsSection)appConfiguration.GetSection("appSecrets");
+
+            // If the appSecrets section does not exist, create it.
             if (localSecretsSection == null)
             {
                 localSecretsSection = new LocalSecretsSection();
-                configuration.Sections.Add("appSecrets", localSecretsSection);
-                configuration.Save();
+                appConfiguration.Sections.Add("appSecrets", localSecretsSection);
+                appConfiguration.Save();
             }
+
+            // Check to see if the appSecrets section is encrypted.
+            AppSecretsEncrypted = localSecretsSection.SectionInformation.IsProtected;
 
             this.IsInitialized = true;
         }
@@ -65,38 +73,34 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             return new KeyValuePair<string, string>();
         }
 
-        public override bool CreateSecret(KeyValuePair<string, string> secret)
-        {
-            try
-            {
-                var newSecret = new LocalSecretElement
-                {
-                    Name = secret.Key,
-                    Secret = secret.Value
-                };
-                return localSecretsSection.Secrets.Add(newSecret);
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return false;
-            }
-        }
-
         public override bool UpdateSecret(KeyValuePair<string, string> secret)
         {
             try
             {
+                var result = false;
                 var localSecret = localSecretsSection.Secrets.Get(secret.Key);
-                var deleted = (bool)localSecret.ElementInformation.Properties["Deleted"].Value;
-                if (localSecret != null && !deleted)
+                if (localSecret == null)
                 {
-                    localSecret.Secret = secret.Value;
-                    localSecretsSection.Secrets.Update(localSecret);
-                    return true;
+                    localSecret = new LocalSecretElement
+                    {
+                        Name = secret.Key,
+                        Secret = secret.Value
+                    };
+                    result = localSecretsSection.Secrets.Add(localSecret);
+                }
+                else
+                {
+                    var deleted = (bool)localSecret.ElementInformation.Properties["Deleted"].Value;
+                    if (!deleted)
+                    {
+                        localSecret.Secret = secret.Value;
+                        result = localSecretsSection.Secrets.Update(localSecret);
+                    }
                 }
 
-                throw new Exception("Secret not found.");
+                appConfiguration.Save();
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -114,6 +118,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
                 if (secret != null && !deleted)
                 {
                     secret.ElementInformation.Properties["Deleted"].Value = true;
+                    appConfiguration.Save();
                     return true;
                 }
 
@@ -140,6 +145,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
                 if (secret != null && deleted)
                 {
                     secret.ElementInformation.Properties["Deleted"].Value = false;
+                    appConfiguration.Save();
                     return true;
                 }
 
@@ -166,6 +172,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
                 if (secret != null && deleted)
                 {
                     localSecretsSection.Secrets.Delete(secretName);
+                    appConfiguration.Save();
                     return true;
                 }
 
@@ -183,12 +190,21 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             }
         }
 
-        public override List<string> GetSettingNames()
+        public override Dictionary<string, string> GetSettings()
         {
-            return new List<string>
+            var settings = new Dictionary<string, string>();
+            var names = new List<string>
             {
-                "ExchangeThumbprint"
+                "ExchangeThumbprint",
             };
+
+            foreach (var name in names)
+            {
+                var settingSecret = this.GetSecret($"{base.vaultSettingsPrefix}{name}");
+                settings.Add(name, settingSecret.Value);
+            }
+
+            return settings;
         }
 
         public override bool ConfirmSettings(Dictionary<string, string> settings)
@@ -204,25 +220,40 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         {
             if (this.ConfirmSettings(settings))
             {
-                foreach (var setting in settings)
+                // encrypt the web.config using the thumbprint
+                var thumbprint = settings["ExchangeThumbprint"];
+                var certificateProvider = new CertificateProvider();
+                var cert = certificateProvider.FindCertificateByThumbprint(thumbprint);
+
+                // programatically add or update configProtectedData section to the web.config in the "~/DesktopModules/DnnVaultApi" folder.
+                // The result is a web.config that looks like this:
+                // <configProtectedData>
+                //  <providers>
+                //    <add  name = "CustomProvider"
+                //          thumbprint = "THIS0IS0NOT0REAL0THIS0IS0A0SAMPLE0000000"
+                //          storeLocation = "LocalMachine"
+                //          type = "Pkcs12ProtectedConfigurationProvider.Pkcs12ProtectedConfigurationProvider, PKCS12ProtectedConfigurationProvider, Version=1.0.1.0, Culture=neutral, PublicKeyToken=455a6e7bdbdc9023" />
+                //  </ providers>
+                // </ configProtectedData>
+                var configProtectedData = appConfiguration.GetSection("configProtectedData") as ProtectedConfigurationSection;
+                if (configProtectedData != null)
                 {
-                    var secret = localSecretsSection.Secrets.Get(setting.Key);
-                    if (secret != null)
+                    var provider = configProtectedData.Providers["DnnVaultApiProvider"];
+                    if (provider == null)
                     {
-                        secret.Secret = setting.Value;
-                        localSecretsSection.Secrets.Update(secret);
+                        provider = new ProviderSettings("DnnVaultApiProvider", "Pkcs12ProtectedConfigurationProvider.Pkcs12ProtectedConfigurationProvider, PKCS12ProtectedConfigurationProvider, Version=1.0.1.0, Culture=neutral, PublicKeyToken=455a6e7bdbdc9023");
+                        configProtectedData.Providers.Add(provider);
                     }
-                    else
-                    {
-                        localSecretsSection.Secrets.Add(new LocalSecretElement
-                        {
-                            Name = setting.Key,
-                            Secret = setting.Value
-                        });
-                    }
+
+                    provider.Parameters["thumbprint"] = thumbprint;
+                    provider.Parameters["storeLocation"] = "LocalMachine";
                 }
 
-                configuration.Save();
+                appConfiguration.Save();
+
+                // We'll keep this in two places to make the rest of settings management easier.
+                this.UpdateSecret(new KeyValuePair<string, string>($"{base.vaultSettingsPrefix}ExchangeThumbprint", thumbprint));
+
                 return true;
             }
 
@@ -236,21 +267,20 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         {
             try
             {
-                var moduleConfig = WebConfigurationManager.OpenWebConfiguration("~/DesktopModules/DnnVaultApi");
-                var appSecretsSection = moduleConfig.GetSection("appSecrets");
+                var appSecretsSection = appConfiguration.GetSection("appSecrets");
                 if (appSecretsSection == null)
                 {
                     var appSecrets = new LocalSecretsSection();
-                    moduleConfig.Sections.Add("appSecrets", appSecrets);
-                    moduleConfig.Save();
+                    appConfiguration.Sections.Add("appSecrets", appSecrets);
+                    appConfiguration.Save();
                 }
 
                 // Encrypt the appSecrets section.
                 if (!appSecretsSection.SectionInformation.IsProtected)
                 {
-                    appSecretsSection.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
+                    appSecretsSection.SectionInformation.ProtectSection("DnnVaultApiProvider");
                     appSecretsSection.SectionInformation.ForceSave = true;
-                    moduleConfig.Save();
+                    appConfiguration.Save();
                 }
             }
             catch (Exception ex)
@@ -264,17 +294,77 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
 
         public bool DecryptAppSecrets()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var appSecretsSection = appConfiguration.GetSection("appSecrets");
+                if (appSecretsSection == null)
+                {
+                    var appSecrets = new LocalSecretsSection();
+                    appConfiguration.Sections.Add("appSecrets", appSecrets);
+                    appConfiguration.Save();
+                }
+
+                // Encrypt the appSecrets section.
+                if (appSecretsSection.SectionInformation.IsProtected)
+                {
+                    appSecretsSection.SectionInformation.UnprotectSection();
+                    appSecretsSection.SectionInformation.ForceSave = true;
+                    appConfiguration.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         public bool EncryptConnectionStrings()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var connectionStringsSection = appConfiguration.GetSection("connectionStrings");
+
+                // Encrypt the connectionStrings section.
+                if (!connectionStringsSection.SectionInformation.IsProtected)
+                {
+                    connectionStringsSection.SectionInformation.ProtectSection("DnnVaultApiProvider");
+                    connectionStringsSection.SectionInformation.ForceSave = true;
+                    appConfiguration.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         public bool DecryptConnectionStrings()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var connectionStringsSection = appConfiguration.GetSection("connectionStrings");
+
+                // Encrypt the connectionStrings section.
+                if (connectionStringsSection.SectionInformation.IsProtected)
+                {
+                    connectionStringsSection.SectionInformation.UnprotectSection();
+                    connectionStringsSection.SectionInformation.ForceSave = true;
+                    appConfiguration.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
     }
 }

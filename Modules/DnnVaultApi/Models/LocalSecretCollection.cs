@@ -82,16 +82,18 @@ namespace Dowdian.Modules.DnnVaultApi.Models
             return null;
         }
 
-        internal void Update(LocalSecretElement secret)
+        internal bool Update(LocalSecretElement secret)
         {
             foreach (LocalSecretElement key in this)
             {
                 if (key.Name == secret.Name)
                 {
                     key.Secret = secret.Secret;
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
 
         internal void Delete(string name)

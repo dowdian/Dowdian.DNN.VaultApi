@@ -18,6 +18,7 @@ namespace Dowdian.Modules.DnnVaultApi.Controllers
         {
             // http://DowdianDnnVaultApi.domain.com/DesktopModules/DnnVaultApi/API/Controller/Action
             mapRouteManager.MapHttpRoute("DnnVaultApi", "default", "{controller}/{action}", new[] { "Dowdian.Modules.DnnVaultApi.Controllers" });
+            mapRouteManager.MapHttpRoute("personabar/DnnVaultApi", "default", "{controller}/{action}", new[] { "Dowdian.Modules.DnnVaultApi.Controllers" });
         }
     }
 }

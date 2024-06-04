@@ -10,13 +10,6 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
     public partial interface ISecretsRepository
     {
         /// <summary>
-        /// Create a secret
-        /// </summary>
-        /// <param name="secret">KeyValuePair(string, string) secret</param>
-        /// <returns>bool</returns>
-        bool CreateSecret(KeyValuePair<string, string> secret);
-
-        /// <summary>
         /// Get a secret
         /// </summary>
         /// <param name="secretName"></param>
@@ -108,6 +101,10 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
 
         public bool IsInitialized => _secretProvider.IsInitialized;
 
+        public bool ConnectionStringsEncrypted => localKeyVaultProvider.ConnectionStringsEncrypted;
+
+        public bool AppSecretsEncrypted => localKeyVaultProvider.AppSecretsEncrypted;
+
         /// <summary>
         /// SecretsRepository
         /// </summary>
@@ -128,11 +125,6 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
                 default:
                     throw new ArgumentException("Invalid secret host");
             }
-        }
-
-        public bool CreateSecret(KeyValuePair<string, string> secret)
-        {
-            return _secretProvider.CreateSecret(secret);
         }
 
         public KeyValuePair<string, string> GetSecret(string secretName)
@@ -168,14 +160,19 @@ namespace Dowdian.Modules.DnnVaultApi.Repositories
             return _secretProvider.PurgeSecret(secretName);
         }
 
-        public List<string> GetSettingNames()
+        public Dictionary<string, string> GetSettings()
         {
-            return _secretProvider.GetSettingNames();
+            return _secretProvider.GetSettings();
         }
 
         public bool ConfimSettings(Dictionary<string, string> settings)
         {
             return _secretProvider.ConfirmSettings(settings);
+        }
+
+        public bool SaveSettings(Dictionary<string, string> settings)
+        {
+            return _secretProvider.SaveSettings(settings);
         }
 
         public bool EncryptAppSecrets()

@@ -7,9 +7,10 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
     /// </summary>
     public abstract class KeyVaultProviderBase
     {
-        public bool IsInitialized { get; protected set; } = false;
+        // A prefix to add to the setting names to avoid conflicts with other secrets.
+        internal string vaultSettingsPrefix = "Dowdian.Modules.DnnVaultApi.";
 
-        public abstract bool CreateSecret(KeyValuePair<string, string> secret);
+        public bool IsInitialized { get; protected set; } = false;
 
         public abstract KeyValuePair<string, string> GetSecret(string secretName);
 
@@ -21,7 +22,7 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
 
         public abstract bool PurgeSecret(string secretName);
 
-        public abstract List<string> GetSettingNames();
+        public abstract Dictionary<string, string> GetSettings();
 
         public abstract bool ConfirmSettings(Dictionary<string, string> settings);
 

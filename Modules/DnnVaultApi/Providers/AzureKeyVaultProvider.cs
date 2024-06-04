@@ -4,14 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Security.Cryptography.X509Certificates;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using DotNetNuke.Services.Exceptions;
-using Dowdian.Modules.DnnVaultApi.Models;
-using Dowdian.Modules.DnnVaultApi.Repositories;
-using static Dowdian.Modules.DnnVaultApi.Repositories.SecretsRepository;
 
 namespace Dowdian.Modules.DnnVaultApi.Providers
 {
@@ -32,25 +27,6 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         }
 
         /// <summary>
-        /// CreateSecret
-        /// </summary>
-        /// <param name="secret">KeyValuePair(string, string) secret</param>
-        public override bool CreateSecret(KeyValuePair<string, string> secret)
-        {
-            try
-            {
-                client.SetSecret(secret.Key, secret.Value);
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// GetSecret
         /// </summary>
         /// <param name="secretName"></param>
@@ -68,7 +44,17 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         /// <param name="secretValue"></param>
         public override bool UpdateSecret(KeyValuePair<string, string> secret)
         {
-            return CreateSecret(secret);
+            try
+            {
+                client.SetSecret(secret.Key, secret.Value);
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -128,15 +114,24 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             return true;
         }
 
-        public override List<string> GetSettingNames()
+        public override Dictionary<string, string> GetSettings()
         {
-            return new List<string>
+            var settings = new Dictionary<string, string>();
+            var names = new List<string>
             {
                 "SignatureThumbprint",
                 "AzureTenantId",
                 "AzureClientApplicationId",
                 "AzureKeyVaultUri"
             };
+
+            foreach (var name in names)
+            {
+                var localKeyVaultProvider = new LocalKeyVaultProvider();
+                var settingSecret = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}{name}");
+                settings.Add(name, settingSecret.Value);
+            }
+            return settings;
         }
 
         public override bool ConfirmSettings(Dictionary<string, string> settings)
@@ -162,15 +157,8 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             {
                 foreach (var setting in settings)
                 {
-                    var secret = localKeyVaultProvider.GetSecret(setting.Key);
-                    if (!string.IsNullOrEmpty(secret.Key))
-                    {
-                        localKeyVaultProvider.UpdateSecret(setting);
-                    }
-                    else
-                    {
-                        localKeyVaultProvider.CreateSecret(setting);
-                    }
+                    var secret = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}{setting.Key}");
+                    localKeyVaultProvider.UpdateSecret(new KeyValuePair<string, string>(secret.Key, setting.Value));
                 }
 
                 return true;
@@ -187,10 +175,10 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             try
             {
                 var localKeyVaultProvider = new LocalKeyVaultProvider();
-                var thumbPrint = localKeyVaultProvider.GetSecret("SignatureThumbprint").Value;
-                var tenantId = localKeyVaultProvider.GetSecret("AzureTenantId").Value;
-                var clientApplicationId = localKeyVaultProvider.GetSecret("AzureClientApplicationId").Value;
-                var keyVaultUri = localKeyVaultProvider.GetSecret("AzureKeyVaultUri").Value;
+                var thumbPrint = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}SignatureThumbprint").Value;
+                var tenantId = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}AzureTenantId").Value;
+                var clientApplicationId = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}AzureClientApplicationId").Value;
+                var keyVaultUri = localKeyVaultProvider.GetSecret($"{base.vaultSettingsPrefix}AzureKeyVaultUri").Value;
 
                 var certificateProvider = new CertificateProvider();
                 var cert = certificateProvider.FindCertificateByThumbprint(thumbPrint);

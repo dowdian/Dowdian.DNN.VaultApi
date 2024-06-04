@@ -18,15 +18,6 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
         }
 
         /// <summary>
-        /// CreateSecret
-        /// </summary>
-        /// <param name="secret">KeyValuePair(string, string) secret</param>
-        public override bool CreateSecret(KeyValuePair<string, string> secret)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// GetSecret
         /// </summary>
         /// <param name="secretName"></param>
@@ -73,9 +64,9 @@ namespace Dowdian.Modules.DnnVaultApi.Providers
             throw new NotImplementedException();
         }
 
-        public override List<string> GetSettingNames()
+        public override Dictionary<string, string> GetSettings()
         {
-            return new List<string>();
+            return new Dictionary<string, string>();
         }
 
         public override bool ConfirmSettings(Dictionary<string, string> settings)
