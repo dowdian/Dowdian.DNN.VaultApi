@@ -1,11 +1,11 @@
 # DNN Azure Key Vault Web API
 ## Introduction
 >__Please Note__: 
->This solution is broken for the moment because of a _lot_ of breaking fixes all at once. I'm working on fixing it. I'll remove this message when it's ready to go.
+>This solution is "working" in the sense that it does what it's supposed to do. However, it is not yet complete. The documentation is incomplete and the solution is not yet fully tested.
 >
 >These instructions are accurate as of May 30, 2024. If you're reading this in the future (which I presume you are), you may need to adjust the instructions to match the current state of the Azure portal. This is what made creating this project so damn hard. _All_ the instructions, tutorials and sample projects I could find were convoluted and/or out of date. This goal of this project is to create a simple project that people (i.e: me) can learn from.
 
-This document is (or will be) boken up into six sections:
+This document is boken up into six sections:
 1. [Certificate Creation](#certificates-creation)
     You'll need to this no matter how you want to use this solution.
 1. [Azure Key Vault Setup](#azure-key-vault-setup)
