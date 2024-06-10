@@ -3,7 +3,7 @@
   <packages>
     <package name="Dowdian.Modules.DnnVaultApi" type="Module" version="01.00.05">
       <friendlyName>DnnVaultApi Module</friendlyName>
-      <description><![CDATA[<p>Catch Phrase!</p>]]></description>
+      <description><![CDATA[<p>A comprehensive solution for keeping your secrets safe.</p>]]></description>
       <iconFile>DesktopModules/MVC/Dowdian.Modules.DnnVaultApi/Images/logo.png</iconFile>
       <owner>
         <name>Michael Dowd</name>
