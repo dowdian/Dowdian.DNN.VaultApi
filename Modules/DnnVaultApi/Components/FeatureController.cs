@@ -65,7 +65,7 @@ namespace Dowdian.Modules.DnnVaultApi.Components
                     var currentInnerXml = assemblyBindingElement.InnerXml;
 
                     // Clear the InnerXml.
-                    assemblyBindingElement.InnerXml = "";
+                    assemblyBindingElement.InnerXml = string.Empty;
 
                     // Prepend the new dependentAssembly element.
                     PrependNewNodeIfNotExists(assemblyBindingElement, "System.Web.Http", "31bf3856ad364e35", "0.0.0.0-32767.32767.32767.32767", "5.3.0.0", nsManager);
